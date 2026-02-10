@@ -1,4 +1,11 @@
+import InterestForm from './components/InterestForm'
+
 function App() {
-  return <div>Hello, World!</div>;
+  return (
+    <div>
+      <h1>DevDivas</h1>
+      <InterestForm />
+    </div>
+  );
 }
 export default App;
