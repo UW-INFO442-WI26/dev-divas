@@ -1,6 +1,7 @@
 import 'survey-core/survey-core.css';
 import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
+import { useCallback } from 'react';
 
 const surveyJson = {
   elements: [{
@@ -132,6 +133,13 @@ export default function InterestForm() {
     "headerView": "advanced"
   }  
   );
+
+  const alertResults = useCallback((survey) => {
+  const results = JSON.stringify(survey.data);
+    alert(results);
+  }, []);
+
+  survey.onComplete.add(alertResults);
 
   return <Survey model={survey} />;
 }
