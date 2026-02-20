@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react'
-import TinderCard from 'react-tinder-card'
+// import TinderCard from 'react-tinder-card'
 import { ref, onValue, get, getDatabase } from 'firebase/database';
-import { database } from '../Firebase.js';
+import { database } from '../firebase.js';
 import '../index.css';
 // import app from '../Firebase.js';
 
@@ -86,26 +86,27 @@ function Match () {
       <h1>React Tinder Card</h1>
       <div className='cardContainer'>
         {schools.map((school, index) => (
-          <TinderCard
-            ref={childRefs[index]}
-            className='swipe'
-            key={school.id}
-            onSwipe={(dir) => swiped(dir, school.Name, index)}
-            onCardLeftScreen={() => outOfFrame(school.Name, index)}
-          >
-            <div
-              style={{ backgroundImage: 'url(' + school.Picture + ')' }}
-              className='card'
-            >
-              <h3>{school.Name}</h3>
-              <p>{school.Location}</p>
-              <div className='tags'>
-                {school.Values.split(',').map((value, idx) => (
-                  <span key={idx} className='tag'>{value.trim()}</span>
-                ))}
-              </div>
-            </div>
-          </TinderCard>
+          <p>Removed TinderCard</p>
+          // <TinderCard
+          //   ref={childRefs[index]}
+          //   className='swipe'
+          //   key={school.id}
+          //   onSwipe={(dir) => swiped(dir, school.Name, index)}
+          //   onCardLeftScreen={() => outOfFrame(school.Name, index)}
+          // >
+          //   <div
+          //     style={{ backgroundImage: 'url(' + school.Picture + ')' }}
+          //     className='card'
+          //   >
+          //     <h3>{school.Name}</h3>
+          //     <p>{school.Location}</p>
+          //     <div className='tags'>
+          //       {school.Values.split(',').map((value, idx) => (
+          //         <span key={idx} className='tag'>{value.trim()}</span>
+          //       ))}
+          //     </div>
+          //   </div>
+          // </TinderCard>
         ))}
       </div>
       <div className='buttons'>
