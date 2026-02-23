@@ -1,3 +1,28 @@
+# DevDivas
+
+Hi! We are a group dedicated to create a space for volunteer teachers to connect with potential underserved schools and promote educational outcomes. 
+
+HMW statement: How might we encourage qualified volunteers to improve students' reading and mathematics proficiency in underserved primary and secondary schools?
+
+---
+
+# Features
+- Matching between volunteers and schools
+- Interest form for extracting user perference
+- Log in to store matched results
+
+---
+
+# Personas
+
+Persona 1:
+<img width="1787" height="1432" alt="UX Persona 1" src="https://github.com/user-attachments/assets/e8a8dd3e-7d68-409a-ae2c-3b406575a6dd" />
+
+Person 2:
+<img width="1802" height="1385" alt="UX Persona 2" src="https://github.com/user-attachments/assets/8a7366c6-2454-4309-b63a-febbbd8fb062" />
+
+---
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
