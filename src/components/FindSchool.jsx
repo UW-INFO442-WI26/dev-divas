@@ -21,7 +21,7 @@ const dummySchools = [
     id: 3,
     Name: "MIT",
     Location: "Massachusetts, USA",
-    Picture: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1",
+    Picture: "./public/mock-school-1.jpg",
     Values: "Engineering, Research, Technology"
   }
 ]
