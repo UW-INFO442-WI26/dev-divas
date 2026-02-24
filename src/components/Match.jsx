@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react'
 // import TinderCard from 'react-tinder-card'
 import { ref, onValue, get, getDatabase } from 'firebase/database';
-import { database } from '../firebase.js';
+import { database } from '../Firebase.js';
 import '../index.css';
 // import app from '../Firebase.js';
 
