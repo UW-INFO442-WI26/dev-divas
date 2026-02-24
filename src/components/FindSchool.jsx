@@ -5,23 +5,23 @@ import "../index.css"
 const dummySchools = [
   {
     id: 1,
-    Name: "Stanford University",
+    Name: "Elo High School",
     Location: "California, USA",
     Picture: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54",
     Values: "Computer Science, Innovation, Research"
   },
   {
     id: 2,
-    Name: "New York University",
+    Name: "Sanchez Primary School",
     Location: "New York, USA",
     Picture: "https://images.unsplash.com/photo-1562774053-701939374585",
     Values: "Business, Arts, Volunteerism"
   },
   {
     id: 3,
-    Name: "MIT",
+    Name: "Yoshea Elementary School",
     Location: "Massachusetts, USA",
-    Picture: "./public/mock-school-1.jpg",
+    Picture: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54",
     Values: "Engineering, Research, Technology"
   }
 ]
@@ -29,6 +29,7 @@ const dummySchools = [
 function FindSchool() {
   const [schools, setSchools] = useState(dummySchools)
   const [lastDirection, setLastDirection] = useState(null)
+  const [isVisible, setIsVisible] = useState(true)
 
   const removeTopCard = (direction) => {
     if (!schools.length) return
