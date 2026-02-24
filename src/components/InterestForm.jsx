@@ -1,10 +1,13 @@
 import 'survey-core/survey-core.css';
 import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { push, ref } from 'firebase/database';  
 import { database } from '../Firebase.js'; 
+import "../index.css" 
 
+// interest form items
 const surveyJson = 
 {
   "title": "Interest Form",
@@ -78,6 +81,9 @@ const surveyJson =
 };
 
 export default function InterestForm() {
+  const navigate = useNavigate(); // navigate for directing to match
+  const [surveyCompleted, setSurveyCompleted] = useState(false);
+
   const survey = new Model(surveyJson);
   survey.applyTheme({
     "themeName": "contrast",
@@ -200,7 +206,9 @@ export default function InterestForm() {
       push(ref(database, 'surveyResults'), survey.data)
         .then(() => {
           console.log('Survey results added to Firebase successfully!');
-          alert('Thank you for completing the survey!');
+          //local storage of survey data for later use in matching page
+          localStorage.setItem('userSurveyData', JSON.stringify(survey.data));
+          setSurveyCompleted(true);
         })
         .catch((error) => {
           console.error('Error adding survey results to Firebase:', error);
@@ -209,6 +217,18 @@ export default function InterestForm() {
     }, []);
 
     survey.onComplete.add(handleSurveyComplete);
+
+  // handling aftermath of completing the survey
+  if (surveyCompleted) {
+    return (
+      <div style={{ textAlign: 'center', padding: '50px' }}>
+        <h2>Thank you for completing the survey!</h2>
+        <button onClick={() => navigate('/match')} className="finish-button">
+          See Results
+        </button>
+      </div>
+    );
+  }
 
   return <Survey model={survey} />;
 }
