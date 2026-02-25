@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { motion } from "motion/react"
-import "../index.css" 
+import '../css/Match.css';
 
 // dummy school data for matching
 const dummySchools = [
@@ -93,8 +93,8 @@ export default function Match() {
   }
 
   return (
-    <div className="app">
-      <h1>Matched Schools</h1>
+    <div className="container">
+      <h1 className="title">Matched Schools</h1>
       {schools.length === 0 ? (
         <p>There are no schools left. Please retake the survey or contact us for more options.</p>
       ) : (
@@ -108,24 +108,27 @@ export default function Match() {
                   className="swipe"
                   drag={isTop ? "x" : false}
                   onDragEnd={(event, info) => {
-                    if (info.offset.x > 100) removeTopCard("right")
-                    else if (info.offset.x < -100) removeTopCard("left")
+                    if (info.offset.x > 100) removeTopCard("no")
+                    else if (info.offset.x < -100) removeTopCard("yes")
                   }}
                   dragConstraints={{ left: 0, right: 0 }}
                   whileTap={{ scale: 0.95 }}
                   style={{ zIndex: index }}
                 >
-                  <div
-                    className="card"
-                    style={{ backgroundImage: `url(${school.Picture})` }}
-                  >
-                    <h3>{school.Name}</h3>
-                    <p>{school.Location}</p>
-                    <p>PrefLevel: {school.PrefLevel}</p>
-                    <div className="tags">
-                      {school.Values.split(',').map((value, idx) => (
-                        <span key={idx} className="tag">{value.trim()}</span>
-                      ))}
+                  <div className="card">
+                    <div
+                      className="card-image"
+                      style={{ backgroundImage: `url(${school.Picture})` }}
+                    ></div>
+                    <div className="card-info">
+                      <h3>{school.Name}</h3>
+                      <p>Qualifications: {school.PrefLevel}</p>
+                      <p>{school.Location}</p>
+                      <div className="tags">
+                        {school.Values.split(',').map((value, idx) => (
+                          <span key={idx} className="tag">{value.trim()}</span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -134,12 +137,12 @@ export default function Match() {
           </div>
 
           <div className="buttons">
-            <button onClick={() => removeTopCard("yes")}>Yes</button>
-            <button onClick={() => removeTopCard("no")}>No</button>
+            <button onClick={() => removeTopCard("Yes")}>Yes</button>
+            <button onClick={() => removeTopCard("No")}>No</button>
           </div>
 
           {lastDirection && (
-            <h2 className="infoText">You swiped {lastDirection}</h2>
+            <h2 className="infoText">You chose {lastDirection}</h2>
           )}
         </>
       )}
