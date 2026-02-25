@@ -4,7 +4,7 @@ import { Survey } from 'survey-react-ui';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { push, ref } from 'firebase/database';  
-import { database } from '../Firebase.js'; 
+import { database } from '../firebase.js'; 
 import "../index.css" 
 
 // interest form items
