@@ -48,6 +48,14 @@ const dummySchools = [
   }
 ]
 
+export default function FindSchool() {
+  return (
+    <div>
+      <h1>Review Schools</h1>
+    </div>
+  )
+}
+
 // function FindSchool() {
 //   const [schools, setSchools] = useState(dummySchools)
 //   const [lastDirection, setLastDirection] = useState(null)

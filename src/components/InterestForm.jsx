@@ -85,6 +85,7 @@ export default function InterestForm() {
   const [surveyCompleted, setSurveyCompleted] = useState(false);
 
   const survey = new Model(surveyJson);
+  // applying custom theme to survey
   survey.applyTheme({
     "themeName": "contrast",
     "colorPalette": "light",
@@ -202,6 +203,7 @@ export default function InterestForm() {
   }  
   );
 
+  // TODO: using local storage for now --> task: update after authentication is implemented
   const handleSurveyComplete = useCallback((survey) => {
       push(ref(database, 'surveyResults'), survey.data)
         .then(() => {
@@ -217,11 +219,12 @@ export default function InterestForm() {
     }, []);
 
     survey.onComplete.add(handleSurveyComplete);
+    survey.showCompletedPage = false;
 
   // handling aftermath of completing the survey
   if (surveyCompleted) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div style={{ textAlign: 'center', padding: '50px', backgroundColor: '#f5d3e0', minHeight: '100vh' }}>
         <h2>Thank you for completing the survey!</h2>
         <button onClick={() => navigate('/match')} className="finish-button">
           See Results
