@@ -52,6 +52,7 @@ export default function Match() {
   const [isVisible, setIsVisible] = useState(true) // possible animation for later implementation
 
   // using the locally stored survey data to filter the dummy school data for matching
+  // TODO: maybe should've used the database?
   useEffect(() => {
     const userData = localStorage.getItem('userSurveyData')
     if (userData) {
@@ -67,15 +68,18 @@ export default function Match() {
 
         // if statements handlling bars for education levels
         const educationMatch = userEducation.some(edu => {
-          if (edu === "Middle School" || edu === "High school") return school.PrefLevel === "Middle School" || school.PrefLevel === "High school"
-          if (edu === "Beyond high school" || edu === "College/University" || edu === "Masters" || edu === "PhD") return school.PrefLevel === "High school"
-          return true // edge case, return true
+          // handling middle school cases
+          if (edu === "Middle School") return school.PrefLevel === "Middle School" 
+          // this works for now since the dummy data's lowest bar for edu level is high school and beyond
+          if (edu === "High school" || edu === "Beyond high school" || edu === "College/University" || edu === "Masters" || edu === "PhD") return school.PrefLevel === "High school"
+          return false // edge case, return false since the input is unknown
         })
 
         return interestMatch && educationMatch
       })
 
-      setSchools(filteredSchools)
+      setSchools(filteredSchools) // set results
+    
     } else {
       // no user input
       <p>Please complete the survey.</p>
@@ -117,7 +121,7 @@ export default function Match() {
                   >
                     <h3>{school.Name}</h3>
                     <p>{school.Location}</p>
-                    <p>Level: {school.Level}</p>
+                    <p>PrefLevel: {school.PrefLevel}</p>
                     <div className="tags">
                       {school.Values.split(',').map((value, idx) => (
                         <span key={idx} className="tag">{value.trim()}</span>
