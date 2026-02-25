@@ -1,22 +1,91 @@
 import 'survey-core/survey-core.css';
 import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { push, ref } from 'firebase/database';  
+import { database } from '../firebase.js'; 
+import "../index.css" 
 
-const surveyJson = {
-  elements: [{
-    name: "FirstName",
-    title: "Enter your first name:",
-    type: "text"
-  }, {
-    name: "LastName",
-    title: "Enter your last name:",
-    type: "text"
-  }]
+// interest form items
+const surveyJson = 
+{
+  "title": "Interest Form",
+  "description": "Fill out your interests and start matching!",
+  "pages": [
+    {
+      "name": "Questions",
+      "elements": [
+        {
+          "type": "tagbox",
+          "name": "question1",
+          "title": "What are some key aspect you are looking for in a school?\n",
+          "choices": [
+            {
+              "value": "Strong mission",
+              "text": "Strong mission"
+            },
+            {
+              "value": "Friendly staff",
+              "text": "Friendly staff"
+            },
+            {
+              "value": "Flexible worktime",
+              "text": "Flexible worktime"
+            },
+            {
+              "value": "Community service",
+              "text": "Community service"
+            },
+            {
+              "value": "Fun students",
+              "text": "Fun students"
+            }
+          ]
+        },
+        {
+          "type": "tagbox",
+          "name": "question2",
+          "title": "What is your highest level of education?\n",
+          "choices": [
+            {
+              "value": "Middle School",
+              "text": "Middle School"
+            },
+            {
+              "value": "High school",
+              "text": "High school"
+            },
+            {
+              "value": "Beyond high school",
+              "text": "Beyond high school"
+            },
+            {
+              "value": "College/University",
+              "text": "College/University"
+            },
+            {
+              "value": "Masters",
+              "text": "Masters"
+            },
+            {
+              "value": "PhD",
+              "text": "PhD"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "headerView": "advanced"
 };
 
 export default function InterestForm() {
+  const navigate = useNavigate(); // navigate for directing to match
+  const [surveyCompleted, setSurveyCompleted] = useState(false);
+
   const survey = new Model(surveyJson);
+  // applying custom theme to survey
   survey.applyTheme({
     "themeName": "contrast",
     "colorPalette": "light",
@@ -134,12 +203,35 @@ export default function InterestForm() {
   }  
   );
 
-  const alertResults = useCallback((survey) => {
-  const results = JSON.stringify(survey.data);
-    alert(results);
-  }, []);
+  // TODO: using local storage for now --> task: update after authentication is implemented
+  const handleSurveyComplete = useCallback((survey) => {
+      push(ref(database, 'surveyResults'), survey.data)
+        .then(() => {
+          console.log('Survey results added to Firebase successfully!');
+          //local storage of survey data for later use in matching page
+          localStorage.setItem('userSurveyData', JSON.stringify(survey.data));
+          setSurveyCompleted(true);
+        })
+        .catch((error) => {
+          console.error('Error adding survey results to Firebase:', error);
+          alert('There was an error saving your results. Please try again.');
+        });
+    }, []);
 
-  survey.onComplete.add(alertResults);
+    survey.onComplete.add(handleSurveyComplete);
+    survey.showCompletedPage = false;
+
+  // handling aftermath of completing the survey
+  if (surveyCompleted) {
+    return (
+      <div style={{ textAlign: 'center', padding: '50px', backgroundColor: '#f5d3e0', minHeight: '100vh' }}>
+        <h2>Thank you for completing the survey!</h2>
+        <button onClick={() => navigate('/match')} className="finish-button">
+          See Results
+        </button>
+      </div>
+    );
+  }
 
   return <Survey model={survey} />;
 }
