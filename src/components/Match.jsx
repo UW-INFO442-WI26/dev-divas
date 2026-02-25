@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { motion } from "motion/react"
+//import { motion } from "motion/react"
 import '../css/Match.css';
 
 // dummy school data for matching
