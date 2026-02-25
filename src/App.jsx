@@ -3,7 +3,7 @@ import Navigation from './components/Navigation'
 import Home from './components/Home'
 import FindSchool from './components/FindSchool'
 import Mission from './components/Mission'
-import FAQ from './components/FAQ'
+import LogIn from './components/LogIn'
 import Contact from './components/Contact'
 import InterestForm from './components/InterestForm'
 import Match from './components/Match'
@@ -16,7 +16,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/find-school" element={<FindSchool />} />
         <Route path="/mission" element={<Mission />} />
-        <Route path="/faq" element={<FAQ />} />
+        <Route path="/log-in" element={<LogIn />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/interest-form" element={<InterestForm />} />
         <Route path="/match" element={<Match />} />
