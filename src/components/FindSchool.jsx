@@ -1,9 +1,4 @@
-// Nicole: I have used all of this page for matching algorithm
-// TODO: Just render the dummy school as simple cards for viewing
-
-// import React, { useState } from "react"
-// import { motion } from "motion/react"
-// import "../index.css" 
+import "../css/FindSchool.css";
 
 const dummySchools = [
   {
@@ -51,69 +46,26 @@ const dummySchools = [
 export default function FindSchool() {
   return (
     <div>
-      <h1>Review Schools</h1>
+      <section className="school-list">
+        <h1>Schools that need you now</h1>
+        <p>
+          These schools have the most urgent need for volunteer teachers.
+        </p>
+        
+        <div className="school-card-container">
+          {dummySchools.map((school) => (
+            <div key={school.id} className="school-card">
+              <img src={school.Picture} alt={school.Name} className="school-image" />
+              <div className="school-info">
+                <h2>{school.Name}</h2>
+                <p>{school.Location}</p>
+                <p>Values: {school.Values}</p>
+                <p>Preferred Level: {school.PrefLevel}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }
-
-// function FindSchool() {
-//   const [schools, setSchools] = useState(dummySchools)
-//   const [lastDirection, setLastDirection] = useState(null)
-//   const [isVisible, setIsVisible] = useState(true)
-
-//   const removeTopCard = (direction) => {
-//     if (!schools.length) return
-//     setLastDirection(direction)
-//     setSchools(prev => prev.slice(0, -1))
-//   }
-
-//   return (
-//     <div className="app">
-//       <h1>Review Schools</h1>
-
-//       <div className="cardContainer">
-//         {schools.map((school, index) => {
-//           const isTop = index === schools.length - 1
-//           return (
-//             <motion.div
-//               key={school.id}
-//               className="swipe"
-//               drag={isTop ? "x" : false}
-//               onDragEnd={(event, info) => {
-//                 if (info.offset.x > 100) removeTopCard("right")
-//                 else if (info.offset.x < -100) removeTopCard("left")
-//               }}
-//               dragConstraints={{ left: 0, right: 0 }}
-//               whileTap={{ scale: 0.95 }}
-//               style={{ zIndex: index }}
-//             >
-//               <div
-//                 className="card"
-//                 style={{ backgroundImage: `url(${school.Picture})` }}
-//               >
-//                 <h3>{school.Name}</h3>
-//                 <p>{school.Location}</p>
-//                 <div className="tags">
-//                   {school.Values.split(',').map((value, idx) => (
-//                     <span key={idx} className="tag">{value.trim()}</span>
-//                   ))}
-//                 </div>
-//               </div>
-//             </motion.div>
-//           )
-//         })}
-//       </div>
-
-//       <div className="buttons">
-//         <button onClick={() => removeTopCard("left")}>Swipe left</button>
-//         <button onClick={() => removeTopCard("right")}>Swipe right</button>
-//       </div>
-
-//       {lastDirection && (
-//         <h2 className="infoText">You swiped {lastDirection}</h2>
-//       )}
-//     </div>
-//   )
-// }
-
-// export default FindSchool

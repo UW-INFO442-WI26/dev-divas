@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-//import { motion } from "motion/react"
+// import { motion } from "motion/react"
 import '../css/Match.css';
 
 // dummy school data for matching
@@ -49,7 +49,7 @@ const dummySchools = [
 export default function Match() {
   const [schools, setSchools] = useState([])
   const [lastDirection, setLastDirection] = useState(null)
-  const [isVisible, setIsVisible] = useState(true) // possible animation for later implementation
+  // const [isVisible, setIsVisible] = useState(true) // possible animation for later implementation
 
   // using the locally stored survey data to filter the dummy school data for matching
   // TODO: maybe should've used the database?
@@ -103,7 +103,7 @@ export default function Match() {
             {schools.map((school, index) => {
               const isTop = index === schools.length - 1
               return (
-                <motion.div
+                <div
                   key={school.id}
                   className="swipe"
                   drag={isTop ? "x" : false}
@@ -131,7 +131,7 @@ export default function Match() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               )
             })}
           </div>
