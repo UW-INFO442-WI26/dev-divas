@@ -9,12 +9,14 @@
 .title {
     align-items: center;
     justify-content: center;
+    margin: 10px;
 }
 
 .cardContainer {
   width: 90vw;
   max-width: 260px;
   height: 400px;
+  margin: 5px;
 }
 
 .swipe {
@@ -34,7 +36,7 @@
 }
 
 .card-image {
-  height: 80%;
+  height: 75%;
   background-size: cover;
   background-position: center;
   border-radius: 20px 20px 0 0;
