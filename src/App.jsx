@@ -7,6 +7,7 @@ import FAQ from './components/FAQ'
 import Contact from './components/Contact'
 import InterestForm from './components/InterestForm'
 import Match from './components/Match'
+import Qualifications from './components/Qualifications'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/interest-form" element={<InterestForm />} />
         <Route path="/match" element={<Match />} />
+        <Route path ="/qualifications" element = {<Qualifications />} />
       </Routes>
     </BrowserRouter>
   );
