@@ -13,6 +13,7 @@ function Navigation() {
         <Link to="/mission" className="nav-link">Mission</Link>
         <Link to="/faq" className="nav-link">FAQ</Link>
         <Link to="/contact" className="nav-link">Contact</Link>
+        <Link to="/qualifications" className="nav-link"> Profile</Link>
         <Link to="/interest-form" className="volunteer-button">Volunteer Now</Link>
       </div>
     </nav>
