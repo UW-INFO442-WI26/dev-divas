@@ -1,49 +1,18 @@
 import "../css/FindSchool.css";
-
-const dummySchools = [
-  {
-    id: 1,
-    Name: "Elo High School",
-    Location: "California, USA",
-    Picture: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54",
-    Values: "Strong mission, Community service",
-    PrefLevel: "High school"
-  },
-  {
-    id: 2,
-    Name: "Sanchez Primary School",
-    Location: "New York, USA",
-    Picture: "https://images.unsplash.com/photo-1562774053-701939374585",
-    Values: "Flexible worktime, Fun students",
-    PrefLevel: "Middle School"
-  },
-  {
-    id: 3,
-    Name: "Yoshea Elementary School",
-    Location: "Massachusetts, USA",
-    Picture: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54",
-    Values: "Friendly staff, Community service",
-    PrefLevel: "Middle School"
-  },
-  {
-    id: 4,
-    Name: "Almond Academy",
-    Location: "Texas, USA",
-    Picture: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54",
-    Values: "Strong mission, Friendly staff",
-    PrefLevel: "High school"
-  },
-  {
-    id: 5,
-    Name: "Layhay Primary School",
-    Location: "Florida, USA",
-    Picture: "https://images.unsplash.com/photo-1562774053-701939374585",
-    Values: "Fun students, Flexible worktime",
-    PrefLevel: "Middle School"
-  }
-]
+import { useState } from "react";
+import { dummySchools } from "./Match";
 
 export default function FindSchool() {
+  const [selectedSchool, setSelectedSchool] = useState(null)
+
+  const openModal = (school) => {
+    setSelectedSchool(school)
+  }
+
+  const closeModal = () => {
+    setSelectedSchool(null)
+  }
+
   return (
     <div>
       <section className="school-list">
@@ -54,7 +23,7 @@ export default function FindSchool() {
         
         <div className="school-card-container">
           {dummySchools.map((school) => (
-            <div key={school.id} className="school-card">
+            <div key={school.id} className="school-card" onClick={() => openModal(school)}>
               <img src={school.Picture} alt={school.Name} className="school-image" />
               <div className="school-info">
                 <h2>{school.Name}</h2>
@@ -65,6 +34,38 @@ export default function FindSchool() {
             </div>
           ))}
         </div>
+
+        {selectedSchool && (
+        <div className="modal-container" onClick={closeModal}>
+          <div className="modal" onClick={(event) => event.stopPropagation()}>
+            <img
+              className="modal-image"
+              src={selectedSchool.Picture}
+              alt={selectedSchool.Name}
+            />
+            <h2 className="modal-title">{selectedSchool.Name}</h2>
+            <p className="modal-text"><strong>Location:</strong> {selectedSchool.Location || "Not available"}</p>
+            <p className="modal-text"><strong>Values:</strong> {selectedSchool.Values || "Not available"}</p>
+            <p className="modal-text"><strong>Preferred Level:</strong> {selectedSchool.PrefLevel || "Not available"}</p>
+            <p className="modal-text"><strong>Available Time:</strong> {selectedSchool.AvailableTime || "Not available"}</p>
+            <p className="modal-text"><strong>Description:</strong> {selectedSchool.Description || "Not available"}</p>
+            <p className="modal-text"><strong>Contact:</strong> {selectedSchool.Contact || "Not available"}</p>
+            <p className="modal-text">
+              <strong>Link:</strong>{" "}
+              {selectedSchool.Link ? (
+                <a href={selectedSchool.Link} target="_blank" rel="noreferrer">
+                  {selectedSchool.Link}
+                </a>
+              ) : (
+                "Not available"
+              )}
+            </p>
+            <button className="modal-close-button" onClick={closeModal}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       </section>
     </div>
   )
