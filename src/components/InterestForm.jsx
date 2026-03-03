@@ -10,8 +10,8 @@ import "../index.css"
 // interest form items
 const surveyJson = 
 {
-  "title": "Interest Form",
-  "description": "Fill out your interests and start matching!",
+  "title": "Interest Form For School Matching",
+  "description": "Select your interests in the following questions and start matching!",
   "pages": [
     {
       "name": "Questions",
