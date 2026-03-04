@@ -1,27 +1,52 @@
-# DevDivas
+# ImpactU
+## INFO 442 - DevDivas
 
-Hi! We are a group dedicated to create a space for volunteer teachers to connect with potential underserved schools and promote educational outcomes. 
+Hi! We are a group dedicated to create a space for volunteer teachers to connect with potential underserved schools and promote educational outcomes.
 
-HMW statement: How might we encourage qualified volunteers to improve students' reading and mathematics proficiency in underserved primary and secondary schools?
+Focusing on SDG 4: Quality Education, our HMW statement follows:
+
+***How might we encourage qualified volunteers to improve students' reading and mathematics proficiency in underserved primary and secondary schools?***
+
+---
+
+# Group Members
+- Deb (Sign in authentication & design)
+- Nicole (Matching feature and school rendering)
+- Jackie (CSS implentation and fixing bugs)
+- Reasha (Homepage)
+- Andrew (Contact and profile)
+- Mouna (Swiping cards in matching)
 
 ---
 
 # Features
-- Matching between volunteers and schools
-- Interest form for extracting user perference
-- Log in to store matched results
+- **Matching** between volunteers and schools
+- **Interest form** for extracting user perference
+- **Log in** to store matched results
 
 ---
 
 # Personas
 
-Persona 1:
 <img width="1787" height="1432" alt="UX Persona 1" src="https://github.com/user-attachments/assets/e8a8dd3e-7d68-409a-ae2c-3b406575a6dd" />
 
-Person 2:
 <img width="1802" height="1385" alt="UX Persona 2" src="https://github.com/user-attachments/assets/8a7366c6-2454-4309-b63a-febbbd8fb062" />
 
 ---
+
+# Developer Information
+
+Built with:
+
+- React JS
+- HTML, CSS, JavaScript
+- Firebase
+- Libraries (Survey.js, tailwind CSS)
+
+---
+
+# Testing Protocol
+
 
 # React + Vite
 
