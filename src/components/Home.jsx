@@ -101,8 +101,7 @@ export default function Home() {
             className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl leading-relaxed"
           >
             Create a volunteer profile, tell us what matters to you, and swipe through
-            tailored school matches — all designed to support quality education in the
-            communities that need it most.
+            tailored school matches.
           </motion.p>
 
           <motion.div

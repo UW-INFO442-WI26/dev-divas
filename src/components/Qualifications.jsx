@@ -193,25 +193,31 @@ export default function Qualifications() {
   const [loading, setLoading] = useState(true);
 
   const handleComplete = useCallback(
-    async (model) => {
-      if (user) {
+    (model) => {
+      if (!user) return;
+
+      const data = model.data;
+
+      // Save locally immediately so the form is prefilled on next visit
+      try {
+        localStorage.setItem(`profile_${user.uid}`, JSON.stringify(data));
+      } catch (error) {
+        console.error('Error saving profile to localStorage:', error);
+      }
+
+      // Fire-and-forget persistence to Firestore so UI isn't blocked
+      (async () => {
         try {
           const volunteerRef = doc(db, 'volunteers', user.uid);
           await setDoc(
             volunteerRef,
-            { profile: model.data },
+            { profile: data },
             { merge: true }
           );
-
-          try {
-            localStorage.setItem(`profile_${user.uid}`, JSON.stringify(model.data));
-          } catch (error) {
-            console.error('Error saving profile to localStorage:', error);
-          }
         } catch (error) {
           console.error('Error saving profile:', error);
         }
-      }
+      })();
     },
     [user]
   );
