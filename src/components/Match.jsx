@@ -190,64 +190,59 @@ export default function Match() {
           </div>
         )}
 
-        {user && !loadingSaved && savedMatches.length > 0 && (
-          <section className="mb-10">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">
-              Your saved matches
-            </h2>
-            <p className="text-sm text-gray-500 mb-4">
-              These schools were previously saved to your account by choosing &quot;Yes&quot;.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {savedMatches.map((match) => (
-                <div
-                  key={match.schoolId || match.id}
-                  className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm"
-                >
-                  <p className="font-semibold text-gray-900">{match.schoolName}</p>
-                  <p className="text-xs text-gray-500 mt-1">{match.location}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Preferences: {match.values}
-                  </p>
-                </div>
-              ))}
+        {user && !loadingSaved && (
+          <div className="mb-6 flex items-center justify-between gap-3 text-sm">
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white text-[10px] font-semibold">
+                {savedMatches.length}
+              </span>
+              <span>
+                Saved match{savedMatches.length === 1 ? '' : 'es'}
+              </span>
             </div>
-          </section>
+            {savedMatches.length > 0 && (
+              <p className="text-xs text-gray-500">
+                You can always revisit these from the account menu under <span className="font-semibold">My matches</span>.
+              </p>
+            )}
+          </div>
         )}
 
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="text-left">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-3xl sm:text-4xl font-bold text-gray-900"
-            >
-              Review your matches{' '}
-              <span className="text-rose-500 text-xl align-middle">
-                ({schools.length}/{matchCount})
-              </span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mt-2 text-gray-500 text-sm sm:text-base max-w-xl"
-            >
-              Each card represents a school that aligns with your interests and education level.
-              Choose <span className="font-semibold text-emerald-600">Yes</span> to save a school
-              to your matches or <span className="font-semibold text-gray-500">No</span> to skip it.
-            </motion.p>
+        {matchCount > 0 && (
+          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="text-left">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-3xl sm:text-4xl font-bold text-gray-900"
+              >
+                Review your matches{' '}
+                <span className="text-rose-500 text-xl align-middle">
+                  ({schools.length}/{matchCount})
+                </span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="mt-2 text-gray-500 text-sm sm:text-base max-w-xl"
+              >
+                Each card represents a school that aligns with your interests and education level.
+                Choose <span className="font-semibold text-emerald-600">Yes</span> to save a school
+                to your matches or <span className="font-semibold text-gray-500">No</span> to skip it.
+              </motion.p>
+            </div>
+            <div className="mt-2 md:mt-0 text-sm text-gray-500 bg-white/80 border border-gray-100 rounded-2xl px-4 py-3 shadow-sm">
+              <p className="font-semibold text-gray-800 mb-1">How it works</p>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>Cards are ordered from best match to least.</li>
+                <li>Drag a card or use the buttons below.</li>
+                <li>Your Yes choices are saved to your account when signed in.</li>
+              </ul>
+            </div>
           </div>
-          <div className="mt-2 md:mt-0 text-sm text-gray-500 bg-white/80 border border-gray-100 rounded-2xl px-4 py-3 shadow-sm">
-            <p className="font-semibold text-gray-800 mb-1">How it works</p>
-            <ul className="space-y-1 list-disc list-inside">
-              <li>Cards are ordered from best match to least.</li>
-              <li>Drag a card or use the buttons below.</li>
-              <li>Your Yes choices are saved to your account when signed in.</li>
-            </ul>
-          </div>
-        </div>
+        )}
 
         {/* No matches at all */}
         {matchCount === 0 && (

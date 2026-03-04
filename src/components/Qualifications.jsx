@@ -54,10 +54,15 @@ const surveyJson = {
       "title": "Background Check",
       "elements": [
         {
-          "type": "text",
+          "type": "radiogroup",
           "name": "question4",
           "title": "Have you ever been convicted of a felony?",
-          "description": "This information is required for volunteer safety screening."
+          "description": "This information is required for volunteer safety screening.",
+          "isRequired": true,
+          "choices": [
+            { "value": "yes", "text": "Yes" },
+            { "value": "no", "text": "No" }
+          ]
         }
       ]
     }

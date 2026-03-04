@@ -221,7 +221,7 @@ export default function InterestForm() {
           className="w-full max-w-xl bg-white rounded-3xl border border-rose-100 shadow-lg px-8 py-10 text-center"
         >
           <div className="inline-flex items-center justify-center rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
-            Step 2 of 3 · Interests saved
+            Step 1 of 2 · Interests saved
           </div>
           <div className="w-16 h-16 mx-auto mt-6 mb-4 rounded-full bg-emerald-100 flex items-center justify-center">
             <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -250,7 +250,7 @@ export default function InterestForm() {
       <div className="max-w-3xl mx-auto px-6 py-10 space-y-4">
         <div className="text-left">
           <p className="inline-flex items-center rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-rose-700">
-            Step 2 · Your interests
+            Step 1 · Your interests
           </p>
           <h1 className="mt-3 text-2xl sm:text-3xl font-bold text-gray-900">
             Tell us what you&apos;re looking for
