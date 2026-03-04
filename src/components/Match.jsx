@@ -190,7 +190,7 @@ export default function Match() {
           </div>
         )}
 
-        {user && !loadingSaved && (
+        {user && !loadingSaved && savedMatches.length > 0 && (
           <div className="mb-6 flex items-center justify-between gap-3 text-sm">
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
               <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white text-[10px] font-semibold">
@@ -200,11 +200,9 @@ export default function Match() {
                 Saved match{savedMatches.length === 1 ? '' : 'es'}
               </span>
             </div>
-            {savedMatches.length > 0 && (
-              <p className="text-xs text-gray-500">
-                You can always revisit these from the account menu under <span className="font-semibold">My matches</span>.
-              </p>
-            )}
+            <p className="text-xs text-gray-500">
+              These are schools you previously liked. Scroll down to see them.
+            </p>
           </div>
         )}
 
@@ -244,8 +242,54 @@ export default function Match() {
           </div>
         )}
 
-        {/* No matches at all */}
-        {matchCount === 0 && (
+        {/* Saved matches gallery */}
+        {user && !loadingSaved && savedMatches.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-base font-semibold text-gray-900 mb-2">
+              Your saved schools
+            </h2>
+            <p className="text-xs text-gray-500 mb-3">
+              These are schools you previously liked. Tap any card to see details again.
+            </p>
+            <div className="flex gap-4 overflow-x-auto pb-2">
+              {savedMatches.map((match) => {
+                const school =
+                  dummySchools.find((s) => s.id === match.schoolId) ||
+                  dummySchools.find((s) => String(s.id) === String(match.schoolId));
+                return (
+                  <button
+                    key={match.schoolId || match.id}
+                    type="button"
+                    onClick={() => school && setSelectedSchool(school)}
+                    className="min-w-[220px] max-w-[240px] text-left bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                  >
+                    {school && (
+                      <div
+                        className="h-28 w-full rounded-t-2xl bg-cover bg-center"
+                        style={{ backgroundImage: `url(${school.Picture})` }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <div className="p-3">
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {match.schoolName}
+                      </p>
+                      <p className="mt-1 text-[11px] text-gray-500 truncate">
+                        {match.location}
+                      </p>
+                      <p className="mt-1 text-[11px] text-gray-400 line-clamp-2">
+                        {match.values}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* No new matches from the current survey */}
+        {matchCount === 0 && savedMatches.length === 0 && (
           <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100" role="status">
             <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
