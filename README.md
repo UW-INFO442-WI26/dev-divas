@@ -28,7 +28,13 @@ Focusing on SDG 4: Quality Education, our HMW statement follows:
 
 # Personas
 
+[Persona 1](public/Persona-1.png)
+
+
 <img width="1787" height="1432" alt="UX Persona 1" src="https://github.com/user-attachments/assets/e8a8dd3e-7d68-409a-ae2c-3b406575a6dd" />
+
+[Persona 2](public/Persona-2.png)
+
 
 <img width="1802" height="1385" alt="UX Persona 2" src="https://github.com/user-attachments/assets/8a7366c6-2454-4309-b63a-febbbd8fb062" />
 
@@ -47,6 +53,7 @@ Built with:
 
 # Testing Protocol
 
+[Testing Protocol](public/Prototype-and-Testing-Protocol.pdf)
 
 # React + Vite
 
