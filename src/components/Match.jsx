@@ -105,54 +105,59 @@ export default function Match() {
   }, []);
 
   useEffect(() => {
-    const loadSavedMatches = async () => {
-      if (!user) {
+    if (!user) {
+      setSavedMatches([]);
+      setLoadingSaved(false);
+      return;
+    }
+
+    // 1) Load from localStorage immediately so the UI updates fast
+    try {
+      const localRaw = localStorage.getItem(`savedMatches_${user.uid}`);
+      if (localRaw) {
+        const localMatches = JSON.parse(localRaw) || [];
+        setSavedMatches(localMatches);
+      } else {
         setSavedMatches([]);
-        setLoadingSaved(false);
-        return;
       }
+    } catch (error) {
+      console.error('Error loading saved matches from localStorage:', error);
+      setSavedMatches([]);
+    } finally {
+      setLoadingSaved(false);
+    }
 
-      let merged = [];
-
-      // Load from Firestore if possible
+    // 2) Refresh from Firestore in the background and merge
+    (async () => {
       try {
         const snap = await getDocs(collection(db, 'volunteers', user.uid, 'matches'));
         const yesMatches = snap.docs
           .map((d) => ({ id: d.id, ...d.data() }))
           .filter((m) => m.choice === 'yes');
-        merged = yesMatches;
+
+        setSavedMatches((prev) => {
+          const byId = new Map();
+          (prev || []).forEach((m) => {
+            if (m && m.schoolId != null) byId.set(String(m.schoolId), m);
+          });
+          (yesMatches || []).forEach((m) => {
+            if (m && m.schoolId != null) byId.set(String(m.schoolId), m);
+          });
+          const merged = Array.from(byId.values());
+
+          // Keep localStorage in sync
+          try {
+            localStorage.setItem(`savedMatches_${user.uid}`, JSON.stringify(merged));
+          } catch (error) {
+            console.error('Error writing merged saved matches to localStorage:', error);
+          }
+
+          return merged;
+        });
       } catch (error) {
         console.error('Error loading saved matches from Firestore:', error);
       }
-
-      // Merge with localStorage fallback
-      try {
-        const localRaw = localStorage.getItem(`savedMatches_${user.uid}`);
-        if (localRaw) {
-          const localMatches = JSON.parse(localRaw);
-          const byId = new Map();
-          merged.forEach((m) => {
-            if (m && m.schoolId != null) {
-              byId.set(String(m.schoolId), m);
-            }
-          });
-          (localMatches || []).forEach((m) => {
-            if (m && m.schoolId != null) {
-              const key = String(m.schoolId);
-              byId.set(key, { ...byId.get(key), ...m });
-            }
-          });
-          merged = Array.from(byId.values());
-        }
-      } catch (error) {
-        console.error('Error loading saved matches from localStorage:', error);
-      }
-
-      setSavedMatches(merged);
-      setLoadingSaved(false);
-    };
-
-    loadSavedMatches();
+    })();
   }, [user]);
 
   const removeTopCard = (direction) => {
