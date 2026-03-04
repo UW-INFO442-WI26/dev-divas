@@ -403,7 +403,15 @@ export default function Match() {
         {matchCount > 0 && schools.length === 0 && successMatch.length === 0 && (
           <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100" role="status">
             <p className="text-xl text-gray-500 font-medium">No matches selected</p>
-            <p className="mt-2 text-gray-400">Please retake the survey to try again.</p>
+            <p className="mt-2 text-gray-400">
+              You reached the end of your matches without saving any schools.
+            </p>
+            <Link
+              to="/interest-form"
+              className="inline-flex mt-6 px-6 py-2.5 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 text-white text-sm font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+            >
+              Retake interest survey
+            </Link>
           </div>
         )}
 
