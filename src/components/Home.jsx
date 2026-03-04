@@ -70,26 +70,12 @@ export default function Home() {
       <section
         ref={heroRef}
         aria-label="Welcome to ImpactU, the volunteer teacher matching platform"
-        className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-rose-50 via-pink-50 to-sky-50"
+        className="relative min-h-screen flex items-center overflow-hidden bg-[radial-gradient(circle_at_top_left,#ffe4ef,transparent_55%),radial-gradient(circle_at_bottom_right,#dbeafe,transparent_55%),linear-gradient(to_bottom,#fff1f2,#e0f2ff)]"
       >
-        {/* Subtle animated glow */}
-        <motion.div
-          aria-hidden="true"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          className="pointer-events-none absolute -top-32 -right-40 h-[26rem] w-[26rem] rounded-full bg-rose-300/40 blur-3xl"
-        />
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-40 -left-24 h-[24rem] w-[24rem] rounded-full bg-sky-200/50 blur-3xl"
-          animate={{ y: [0, 20, 0] }}
-          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-        />
 
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-5xl mx-auto px-6 sm:px-8 lg:px-10 py-24 text-center"
+          className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-24"
         >
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -108,7 +94,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed"
+            className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl leading-relaxed"
           >
             Create a volunteer profile, tell us what matters to you, and swipe through
             tailored school matches.
@@ -118,7 +104,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-10 flex flex-wrap justify-center gap-4"
+            className="mt-10 flex flex-wrap gap-4"
           >
             <button
               onClick={() => navigate('/find-school')}
