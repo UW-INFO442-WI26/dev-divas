@@ -134,6 +134,27 @@ export default function Match() {
 
     if (direction === 'Yes') {
       setSuccessMatch((prev) => [...prev, topSchool]);
+      // Optimistically add to saved matches in-memory
+      setSavedMatches((prev) => {
+        const existingIndex = prev.findIndex((m) => m.schoolId === topSchool.id);
+        const matchData = {
+          schoolId: topSchool.id,
+          schoolName: topSchool.Name,
+          location: topSchool.Location,
+          values: topSchool.Values,
+          prefLevel: topSchool.PrefLevel,
+          choice: 'yes',
+        };
+        if (existingIndex >= 0) {
+          const copy = [...prev];
+          copy[existingIndex] = { ...copy[existingIndex], ...matchData };
+          return copy;
+        }
+        return [...prev, matchData];
+      });
+    } else {
+      // Optimistically remove from saved matches in-memory
+      setSavedMatches((prev) => prev.filter((m) => m.schoolId !== topSchool.id));
     }
 
     // Optimistically update the UI immediately
@@ -152,25 +173,9 @@ export default function Match() {
           choice: direction === 'Yes' ? 'yes' : 'no',
           updatedAt: serverTimestamp(),
         };
-        setDoc(matchRef, matchData, { merge: true })
-          .then(() => {
-            if (direction === 'Yes') {
-              setSavedMatches((prev) => {
-                const existingIndex = prev.findIndex((m) => m.schoolId === topSchool.id);
-                if (existingIndex >= 0) {
-                  const copy = [...prev];
-                  copy[existingIndex] = { ...copy[existingIndex], ...matchData };
-                  return copy;
-                }
-                return [...prev, matchData];
-              });
-            } else {
-              setSavedMatches((prev) => prev.filter((m) => m.schoolId !== topSchool.id));
-            }
-          })
-          .catch((error) => {
-            console.error('Error saving match:', error);
-          });
+        setDoc(matchRef, matchData, { merge: true }).catch((error) => {
+          console.error('Error saving match:', error);
+        });
       } catch (error) {
         console.error('Error initializing match save:', error);
       }
@@ -190,7 +195,7 @@ export default function Match() {
           </div>
         )}
 
-        {user && !loadingSaved && savedMatches.length > 0 && (
+        {user && savedMatches.length > 0 && (
           <div className="mb-6 flex items-center justify-between gap-3 text-sm">
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
               <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white text-[10px] font-semibold">
