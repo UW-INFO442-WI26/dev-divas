@@ -216,25 +216,37 @@ export default function Match() {
         )}
 
         {/* Header */}
-        <div className="text-center mb-12">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-3xl sm:text-4xl font-bold text-gray-900"
-          >
-            Your Matches{' '}
-            <span className="text-rose-500">({schools.length}/{matchCount})</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mt-3 text-gray-500 text-lg max-w-lg mx-auto"
-          >
-            Swipe through your matched schools. Select "Yes" to save a school or "No" to skip it.
-            This prototype uses your latest survey answers together with sample school data and
-            keeps choices only for this session.
-          </motion.p>
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="text-left">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-3xl sm:text-4xl font-bold text-gray-900"
+            >
+              Review your matches{' '}
+              <span className="text-rose-500 text-xl align-middle">
+                ({schools.length}/{matchCount})
+              </span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="mt-2 text-gray-500 text-sm sm:text-base max-w-xl"
+            >
+              Each card represents a school that aligns with your interests and education level.
+              Choose <span className="font-semibold text-emerald-600">Yes</span> to save a school
+              to your matches or <span className="font-semibold text-gray-500">No</span> to skip it.
+            </motion.p>
+          </div>
+          <div className="mt-2 md:mt-0 text-sm text-gray-500 bg-white/80 border border-gray-100 rounded-2xl px-4 py-3 shadow-sm">
+            <p className="font-semibold text-gray-800 mb-1">How it works</p>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>Cards are ordered from best match to least.</li>
+              <li>Drag a card or use the buttons below.</li>
+              <li>Your Yes choices are saved to your account when signed in.</li>
+            </ul>
+          </div>
         </div>
 
         {/* No matches at all */}
@@ -263,8 +275,8 @@ export default function Match() {
                       drag={isTop ? 'x' : false}
                       dragConstraints={{ left: 0, right: 0 }}
                       onDragEnd={(_, info) => {
-                        if (info.offset.x > 100) removeTopCard('No');
-                        else if (info.offset.x < -100) removeTopCard('Yes');
+                        if (info.offset.x > 100) removeTopCard('Yes');
+                        else if (info.offset.x < -100) removeTopCard('No');
                       }}
                       whileTap={isTop ? { scale: 0.97 } : {}}
                       initial={{ scale: 0.95, opacity: 0 }}

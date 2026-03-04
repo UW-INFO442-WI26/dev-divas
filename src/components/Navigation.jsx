@@ -4,6 +4,7 @@ import { useAuth } from '../AuthContext.jsx';
 
 export default function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -22,10 +23,27 @@ export default function Navigation() {
 
   const closeMobile = () => setMobileOpen(false);
 
-  const navLinkClass =
-    'text-sm font-medium text-gray-600 hover:text-rose-500 transition-colors duration-200';
+  const isActive = (path) => location.pathname === path;
+
+  const baseNavLink = 'text-sm font-medium transition-colors duration-200';
+
+  const navLinkClass = (path) =>
+    `${baseNavLink} ${
+      isActive(path)
+        ? 'text-gray-900 border-b-2 border-rose-400 pb-1'
+        : 'text-gray-600 hover:text-rose-500'
+    }`;
   const mobileNavLinkClass =
     'block px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors duration-200';
+
+  const initials = user
+    ? (user.displayName || user.email || '')
+        .split(' ')
+        .map((part) => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
+    : '';
 
   return (
     <nav
@@ -47,48 +65,92 @@ export default function Navigation() {
           </Link>
 
           {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-7">
-            <Link to="/" className={navLinkClass}>Home</Link>
-            <Link to="/find-school" className={navLinkClass}>Find School</Link>
+          <div className="hidden md:flex items-center gap-8">
+            <Link to="/" className={navLinkClass('/')}>Home</Link>
+            <Link to="/find-school" className={navLinkClass('/find-school')}>Find schools</Link>
             <button
               onClick={() => scrollToSection('mission')}
-              className={`${navLinkClass} bg-transparent border-none cursor-pointer p-0`}
+              className={`${baseNavLink} text-gray-600 hover:text-rose-500 bg-transparent border-none cursor-pointer p-0`}
             >
               Mission
             </button>
             <button
               onClick={() => scrollToSection('contact')}
-              className={`${navLinkClass} bg-transparent border-none cursor-pointer p-0`}
+              className={`${baseNavLink} text-gray-600 hover:text-rose-500 bg-transparent border-none cursor-pointer p-0`}
             >
               Contact
             </button>
-            <Link to="/match" className={navLinkClass}>Matches</Link>
-            <Link to="/qualifications" className={navLinkClass}>Profile</Link>
+          </div>
+
+          {/* Desktop actions */}
+          <div className="hidden md:flex items-center gap-4">
             {!user && (
-              <Link to="/log-in" className={navLinkClass}>Log In</Link>
+              <Link to="/log-in" className={navLinkClass('/log-in')}>Log in</Link>
             )}
             {user && (
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-medium text-gray-500">
-                  Signed in as{' '}
-                  <span className="text-gray-800">
-                    {user.displayName || user.email}
-                  </span>
-                </span>
+              <div className="relative">
                 <button
                   type="button"
-                  onClick={logout}
-                  className="text-xs font-semibold text-gray-500 hover:text-rose-500 bg-transparent border-none cursor-pointer"
+                  onClick={() => setAccountOpen((open) => !open)}
+                  aria-haspopup="menu"
+                  aria-expanded={accountOpen}
+                  className="flex items-center gap-2 rounded-full border border-rose-100 bg-white px-3 py-1.5 shadow-sm hover:shadow-md hover:border-rose-200 transition-all text-xs font-medium text-gray-700"
                 >
-                  Sign out
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-rose-500 text-white text-xs font-semibold">
+                    {initials || '?'}
+                  </span>
+                  <span className="max-w-[120px] truncate">
+                    {user.displayName || user.email}
+                  </span>
+                  <svg className="w-3 h-3 text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.188l3.71-3.957a.75.75 0 111.1 1.02l-4.25 4.53a.75.75 0 01-1.1 0l-4.25-4.53a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                  </svg>
                 </button>
+                {accountOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-52 rounded-2xl bg-white border border-gray-100 shadow-lg py-2 text-sm text-gray-700 z-50"
+                    role="menu"
+                  >
+                    <button
+                      type="button"
+                      className="w-full text-left px-4 py-2 hover:bg-rose-50"
+                      onClick={() => {
+                        setAccountOpen(false);
+                        navigate('/match');
+                      }}
+                    >
+                      My matches
+                    </button>
+                    <button
+                      type="button"
+                      className="w-full text-left px-4 py-2 hover:bg-rose-50"
+                      onClick={() => {
+                        setAccountOpen(false);
+                        navigate('/qualifications');
+                      }}
+                    >
+                      My profile
+                    </button>
+                    <div className="my-1 border-t border-gray-100" />
+                    <button
+                      type="button"
+                      className="w-full text-left px-4 py-2 text-gray-500 hover:bg-rose-50"
+                      onClick={() => {
+                        setAccountOpen(false);
+                        logout();
+                      }}
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
               </div>
             )}
             <Link
               to="/interest-form"
               className="inline-flex items-center px-5 py-2 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 text-white text-sm font-semibold shadow-lg shadow-rose-200/50 hover:shadow-xl hover:shadow-rose-300/50 hover:-translate-y-0.5 transition-all duration-300"
             >
-              Volunteer Now
+              Get started
             </Link>
           </div>
 
@@ -115,32 +177,38 @@ export default function Navigation() {
           <div id="mobile-menu" className="md:hidden pb-4 border-t border-rose-100/60 mt-1">
             <div className="flex flex-col gap-1 pt-3">
               <Link to="/" onClick={closeMobile} className={mobileNavLinkClass}>Home</Link>
-              <Link to="/find-school" onClick={closeMobile} className={mobileNavLinkClass}>Find School</Link>
+              <Link to="/find-school" onClick={closeMobile} className={mobileNavLinkClass}>Find schools</Link>
               <button onClick={() => scrollToSection('mission')} className={`${mobileNavLinkClass} text-left bg-transparent border-none cursor-pointer w-full`}>Mission</button>
               <button onClick={() => scrollToSection('contact')} className={`${mobileNavLinkClass} text-left bg-transparent border-none cursor-pointer w-full`}>Contact</button>
-              <Link to="/match" onClick={closeMobile} className={mobileNavLinkClass}>Matches</Link>
-              <Link to="/qualifications" onClick={closeMobile} className={mobileNavLinkClass}>Profile</Link>
+              <div className="mt-2 mb-1 border-t border-rose-100" />
               {!user && (
-                <Link to="/log-in" onClick={closeMobile} className={mobileNavLinkClass}>Log In</Link>
+                <Link to="/log-in" onClick={closeMobile} className={mobileNavLinkClass}>Log in</Link>
               )}
               {user && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeMobile();
-                    logout();
-                  }}
-                  className={mobileNavLinkClass}
-                >
-                  Sign out
-                </button>
+                <>
+                  <p className="px-4 pt-2 pb-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    For volunteers
+                  </p>
+                  <Link to="/match" onClick={closeMobile} className={mobileNavLinkClass}>My matches</Link>
+                  <Link to="/qualifications" onClick={closeMobile} className={mobileNavLinkClass}>My profile</Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeMobile();
+                      logout();
+                    }}
+                    className={mobileNavLinkClass}
+                  >
+                    Sign out
+                  </button>
+                </>
               )}
               <Link
                 to="/interest-form"
                 onClick={closeMobile}
                 className="mx-4 mt-3 text-center px-5 py-2.5 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 text-white text-sm font-semibold shadow-lg shadow-rose-200/50"
               >
-                Volunteer Now
+                Get started
               </Link>
             </div>
           </div>

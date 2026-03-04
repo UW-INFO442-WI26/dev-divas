@@ -218,23 +218,27 @@ export default function InterestForm() {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
+          className="w-full max-w-xl bg-white rounded-3xl border border-rose-100 shadow-lg px-8 py-10 text-center"
         >
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-emerald-100 flex items-center justify-center">
+          <div className="inline-flex items-center justify-center rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
+            Step 2 of 3 · Interests saved
+          </div>
+          <div className="w-16 h-16 mx-auto mt-6 mb-4 rounded-full bg-emerald-100 flex items-center justify-center">
             <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <h2 className="text-3xl font-bold text-gray-900">Thank you!</h2>
-          <p className="mt-3 text-gray-500 text-lg max-w-md mx-auto">
-            Your interests have been recorded. Let's find schools that match your preferences.
+          <p className="mt-3 text-gray-500 text-base max-w-md mx-auto">
+            Your interests have been recorded. Next, review your matched schools and decide where
+            you&apos;d like to volunteer.
           </p>
           <button
             onClick={() => navigate('/match')}
             className="mt-8 px-10 py-4 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold text-lg shadow-lg shadow-rose-200/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
             aria-label="View your school matches"
           >
-            See Your Matches
+            Go to Matches
           </button>
         </motion.div>
       </main>
@@ -243,8 +247,22 @@ export default function InterestForm() {
 
   return (
     <main className="pt-16 min-h-screen bg-rose-50/30">
-      <div className="max-w-3xl mx-auto px-6 py-8">
-        <Survey model={survey} />
+      <div className="max-w-3xl mx-auto px-6 py-10 space-y-4">
+        <div className="text-left">
+          <p className="inline-flex items-center rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-rose-700">
+            Step 2 · Your interests
+          </p>
+          <h1 className="mt-3 text-2xl sm:text-3xl font-bold text-gray-900">
+            Tell us what you&apos;re looking for
+          </h1>
+          <p className="mt-2 text-sm sm:text-base text-gray-600 max-w-xl">
+            This short form lets us understand what kind of school environment and education level
+            you prefer so we can suggest better matches.
+          </p>
+        </div>
+        <div className="mt-4 bg-white/90 rounded-3xl border border-rose-100 shadow-sm p-4 sm:p-6">
+          <Survey model={survey} />
+        </div>
       </div>
     </main>
   );
