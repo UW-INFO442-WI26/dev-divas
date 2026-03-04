@@ -192,11 +192,8 @@ export default function Qualifications() {
 
   const { user } = useAuth();
 
-  const alertResults = useCallback(
+  const handleComplete = useCallback(
     async (survey) => {
-      const results = JSON.stringify(survey.data);
-      alert(results);
-
       if (user) {
         try {
           const volunteerRef = doc(db, 'volunteers', user.uid);
@@ -213,15 +210,14 @@ export default function Qualifications() {
     [user]
   );
 
-  survey.onComplete.add(alertResults);
+  survey.onComplete.add(handleComplete);
 
   return (
     <main className="pt-16 min-h-screen bg-purple-50/30">
       <div className="max-w-3xl mx-auto px-6 py-8 space-y-4">
         <p className="text-sm text-gray-500">
-          This page is a prototype of the volunteer profile editor. Your answers are shown in an
-          alert when you finish and are not yet stored against a real account. In a full version,
-          these details would be saved securely to your volunteer profile.
+          This page is a prototype of the volunteer profile editor. Your answers are saved to your
+          volunteer profile when you&apos;re signed in.
         </p>
         <Survey model={survey} />
       </div>
