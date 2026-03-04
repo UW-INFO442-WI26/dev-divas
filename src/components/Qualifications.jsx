@@ -35,16 +35,17 @@ const surveyJson = {
       "name": "page3",
       "title": "Address & Commute",
       "elements": [
-        { "type": "text", "name": "question9", "title": "Street Address" },
-        { "type": "text", "name": "question8", "title": "City" },
-        { "type": "text", "name": "question10", "title": "State" },
-        { "type": "text", "name": "question11", "title": "Zip Code" },
-        { "type": "text", "name": "question12", "title": "Country" },
+        { "type": "text", "name": "question9", "title": "Street Address", "isRequired": true },
+        { "type": "text", "name": "question8", "title": "City", "isRequired": true },
+        { "type": "text", "name": "question10", "title": "State", "isRequired": true },
+        { "type": "text", "name": "question11", "title": "Zip Code", "isRequired": true },
+        { "type": "text", "name": "question12", "title": "Country", "isRequired": true },
         {
           "type": "slider",
           "name": "question7",
           "title": "How far are you willing to commute? (miles)",
           "description": "You can change this later in your profile settings.",
+          "isRequired": true,
           "customLabels": [0, 20, 40, 60, 80, { "value": 100, "text": "100+" }]
         }
       ]
@@ -201,6 +202,12 @@ export default function Qualifications() {
             { profile: model.data },
             { merge: true }
           );
+
+          try {
+            localStorage.setItem(`profile_${user.uid}`, JSON.stringify(model.data));
+          } catch (error) {
+            console.error('Error saving profile to localStorage:', error);
+          }
         } catch (error) {
           console.error('Error saving profile:', error);
         }
@@ -218,30 +225,46 @@ export default function Qualifications() {
   }, [survey, handleComplete]);
 
   useEffect(() => {
-    const loadProfile = async () => {
-      if (!user) {
-        survey.data = {};
-        setLoading(false);
-        return;
-      }
+    if (!user) {
+      survey.data = {};
+      setLoading(false);
+      return;
+    }
 
+    let merged = {};
+
+    // 1) Hydrate from localStorage first for instant feedback
+    try {
+      const localRaw = localStorage.getItem(`profile_${user.uid}`);
+      if (localRaw) {
+        merged = JSON.parse(localRaw) || {};
+      }
+    } catch (error) {
+      console.error('Error loading profile from localStorage:', error);
+    }
+
+    survey.data = merged;
+    setLoading(false);
+
+    // 2) Refresh from Firestore in the background and merge
+    (async () => {
       try {
         const volunteerRef = doc(db, 'volunteers', user.uid);
         const snap = await getDoc(volunteerRef);
         if (snap.exists() && snap.data().profile) {
-          survey.data = snap.data().profile;
-        } else {
-          survey.data = {};
+          const remote = snap.data().profile;
+          const next = { ...merged, ...remote };
+          survey.data = next;
+          try {
+            localStorage.setItem(`profile_${user.uid}`, JSON.stringify(next));
+          } catch (error) {
+            console.error('Error writing merged profile to localStorage:', error);
+          }
         }
       } catch (error) {
-        console.error('Error loading existing profile:', error);
-        survey.data = {};
-      } finally {
-        setLoading(false);
+        console.error('Error loading existing profile from Firestore:', error);
       }
-    };
-
-    loadProfile();
+    })();
   }, [user, survey]);
 
   if (loading) {
