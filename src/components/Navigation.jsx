@@ -70,14 +70,14 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="Dev Divas — Home">
+          <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="ImpactU — Home">
             <img
               src="/draft heart logo.jpeg"
-              alt="Dev Divas logo"
+              alt="ImpactU logo"
               className="h-9 w-auto rounded-lg"
             />
             <span className="text-lg font-bold bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent hidden sm:inline">
-              Dev Divas
+              ImpactU
             </span>
           </Link>
 

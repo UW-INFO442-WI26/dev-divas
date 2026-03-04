@@ -69,17 +69,27 @@ export default function Home() {
       {/* ═══════════ HERO ═══════════ */}
       <section
         ref={heroRef}
-        aria-label="Welcome to Dev Divas — volunteer teacher matching platform"
-        className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-rose-100 via-pink-50 to-purple-50"
+        aria-label="Welcome to ImpactU, the volunteer teacher matching platform"
+        className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-rose-50 via-pink-50 to-sky-50"
       >
-        {/* Decorative blobs */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-rose-200 rounded-full mix-blend-multiply blur-3xl opacity-40 animate-pulse" aria-hidden="true" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply blur-3xl opacity-30 animate-pulse [animation-delay:2s]" aria-hidden="true" />
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply blur-3xl opacity-25 animate-pulse [animation-delay:4s]" aria-hidden="true" />
+        {/* Subtle animated glow */}
+        <motion.div
+          aria-hidden="true"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
+          className="pointer-events-none absolute -top-32 -right-40 h-[26rem] w-[26rem] rounded-full bg-rose-300/40 blur-3xl"
+        />
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-40 -left-24 h-[24rem] w-[24rem] rounded-full bg-sky-200/50 blur-3xl"
+          animate={{ y: [0, 20, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+        />
 
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-24"
+          className="relative z-10 max-w-5xl mx-auto px-6 sm:px-8 lg:px-10 py-24 text-center"
         >
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -98,7 +108,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl leading-relaxed"
+            className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed"
           >
             Create a volunteer profile, tell us what matters to you, and swipe through
             tailored school matches.
@@ -108,7 +118,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-10 flex flex-wrap gap-4"
+            className="mt-10 flex flex-wrap justify-center gap-4"
           >
             <button
               onClick={() => navigate('/find-school')}
@@ -171,7 +181,7 @@ export default function Home() {
       {/* ═══════════ MISSION ═══════════ */}
       <section
         id="mission"
-        aria-label="Our mission — supporting UN Sustainable Development Goal 4"
+        aria-label="Our mission is supporting UN Sustainable Development Goal 4"
         className="py-24 px-6 bg-gradient-to-b from-rose-50/80 to-white"
       >
         <div className="max-w-6xl mx-auto">
@@ -183,7 +193,7 @@ export default function Home() {
               Quality Education for All
             </h2>
             <p className="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">
-              Aligned with UN Sustainable Development Goal 4 — ensuring inclusive and equitable quality education
+              Aligned with UN Sustainable Development Goal 4, ensuring inclusive and equitable quality education
             </p>
           </Reveal>
 
@@ -194,7 +204,7 @@ export default function Home() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">The Challenge</h3>
                   <p className="text-gray-600 leading-relaxed">
                     Fewer than two-thirds of children meet reading standards, and less
-                    than half meet math standards — especially in marginalized
+                    than half meet math standards, especially in marginalized
                     communities. The COVID-19 pandemic caused even greater learning
                     disruptions worldwide.
                   </p>
@@ -227,7 +237,7 @@ export default function Home() {
                   <p className="text-gray-600 leading-relaxed">
                     Our platform serves as a portal between volunteer teachers and
                     educational organizations, making it easy to find, match, and
-                    connect — so that every classroom can get the support it deserves.
+                    connect, so that every classroom can get the support it deserves.
                   </p>
                 </article>
               </div>
@@ -351,7 +361,7 @@ export default function Home() {
       <footer className="py-12 px-6 bg-gray-900 text-gray-400" role="contentinfo">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
-            <p className="text-sm">&copy; {new Date().getFullYear()} Dev Divas. All rights reserved.</p>
+            <p className="text-sm">&copy; {new Date().getFullYear()} ImpactU. All rights reserved.</p>
             <p className="text-xs mt-1 text-gray-500">
               Supporting UN Sustainable Development Goal 4: Quality Education
             </p>

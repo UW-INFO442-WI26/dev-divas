@@ -457,7 +457,7 @@ export default function Match() {
           </div>
         )}
 
-        {/* Congratulations — matched schools */}
+        {/* Congratulations matched schools */}
         {matchCount > 0 && schools.length === 0 && successMatch.length > 0 && (
           <div>
             <motion.h2
