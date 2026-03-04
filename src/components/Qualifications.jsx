@@ -1,9 +1,9 @@
 import 'survey-core/survey-core.css';
 import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { db } from '../firebase.js';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../AuthContext.jsx';
 
 const surveyJson = {
@@ -187,19 +187,18 @@ const surveyTheme = {
 };
 
 export default function Qualifications() {
-  const survey = new Model(surveyJson);
-  survey.applyTheme(surveyTheme);
-
   const { user } = useAuth();
+  const [survey] = useState(() => new Model(surveyJson));
+  const [loading, setLoading] = useState(true);
 
   const handleComplete = useCallback(
-    async (survey) => {
+    async (model) => {
       if (user) {
         try {
           const volunteerRef = doc(db, 'volunteers', user.uid);
           await setDoc(
             volunteerRef,
-            { profile: survey.data },
+            { profile: model.data },
             { merge: true }
           );
         } catch (error) {
@@ -210,14 +209,55 @@ export default function Qualifications() {
     [user]
   );
 
-  survey.onComplete.add(handleComplete);
+  useEffect(() => {
+    survey.applyTheme(surveyTheme);
+    survey.onComplete.add(handleComplete);
+    return () => {
+      survey.onComplete.remove(handleComplete);
+    };
+  }, [survey, handleComplete]);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!user) {
+        survey.data = {};
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const volunteerRef = doc(db, 'volunteers', user.uid);
+        const snap = await getDoc(volunteerRef);
+        if (snap.exists() && snap.data().profile) {
+          survey.data = snap.data().profile;
+        } else {
+          survey.data = {};
+        }
+      } catch (error) {
+        console.error('Error loading existing profile:', error);
+        survey.data = {};
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, [user, survey]);
+
+  if (loading) {
+    return (
+      <main className="pt-16 min-h-screen bg-purple-50/30 flex items-center justify-center px-6">
+        <p className="text-sm text-gray-500">Loading your profile…</p>
+      </main>
+    );
+  }
 
   return (
     <main className="pt-16 min-h-screen bg-purple-50/30">
       <div className="max-w-3xl mx-auto px-6 py-8 space-y-4">
         <p className="text-sm text-gray-500">
-          This page is a prototype of the volunteer profile editor. Your answers are saved to your
-          volunteer profile when you&apos;re signed in.
+          This page lets you review and update your volunteer profile. When you&apos;re signed in,
+          your answers are saved securely to your account.
         </p>
         <Survey model={survey} />
       </div>
