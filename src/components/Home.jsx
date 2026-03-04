@@ -114,9 +114,9 @@ export default function Home() {
             <button
               onClick={() => navigate('/find-school')}
               className="px-8 py-4 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold text-lg shadow-lg shadow-emerald-200/60 hover:shadow-xl hover:shadow-emerald-300/60 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-              aria-label="Browse schools that need volunteer teachers"
+              aria-label="Explore schools that need volunteer teachers"
             >
-              Browse Schools
+              Explore Schools
             </button>
             <button
               onClick={() => navigate('/interest-form')}

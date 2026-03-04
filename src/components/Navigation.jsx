@@ -84,7 +84,7 @@ export default function Navigation() {
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
             <Link to="/" className={navLinkClass('/')}>Home</Link>
-            <Link to="/find-school" className={navLinkClass('/find-school')}>Find schools</Link>
+            <Link to="/find-school" className={navLinkClass('/find-school')}>Explore schools</Link>
             <button
               onClick={() => scrollToSection('mission')}
               className={`${baseNavLink} text-gray-600 hover:text-rose-500 bg-transparent border-none cursor-pointer p-0`}
@@ -194,7 +194,7 @@ export default function Navigation() {
           <div id="mobile-menu" className="md:hidden pb-4 border-t border-rose-100/60 mt-1">
             <div className="flex flex-col gap-1 pt-3">
               <Link to="/" onClick={closeMobile} className={mobileNavLinkClass}>Home</Link>
-              <Link to="/find-school" onClick={closeMobile} className={mobileNavLinkClass}>Find schools</Link>
+              <Link to="/find-school" onClick={closeMobile} className={mobileNavLinkClass}>Explore schools</Link>
               <button onClick={() => scrollToSection('mission')} className={`${mobileNavLinkClass} text-left bg-transparent border-none cursor-pointer w-full`}>Mission</button>
               <button onClick={() => scrollToSection('contact')} className={`${mobileNavLinkClass} text-left bg-transparent border-none cursor-pointer w-full`}>Contact</button>
               <div className="mt-2 mb-1 border-t border-rose-100" />
