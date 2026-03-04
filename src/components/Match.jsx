@@ -161,7 +161,7 @@ export default function Match() {
     setSchools((prev) => prev.slice(0, -1));
 
     // Best-effort persistence that never blocks UI
-    if (user && topSchool) {
+    if (user && topSchool && direction === 'Yes') {
       try {
         const matchRef = doc(db, 'volunteers', user.uid, 'matches', String(topSchool.id));
         const matchData = {
@@ -170,7 +170,7 @@ export default function Match() {
           location: topSchool.Location,
           values: topSchool.Values,
           prefLevel: topSchool.PrefLevel,
-          choice: direction === 'Yes' ? 'yes' : 'no',
+          choice: 'yes',
           updatedAt: serverTimestamp(),
         };
         setDoc(matchRef, matchData, { merge: true }).catch((error) => {
