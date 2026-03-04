@@ -111,18 +111,47 @@ export default function Match() {
         setLoadingSaved(false);
         return;
       }
+
+      let merged = [];
+
+      // Load from Firestore if possible
       try {
         const snap = await getDocs(collection(db, 'volunteers', user.uid, 'matches'));
         const yesMatches = snap.docs
           .map((d) => ({ id: d.id, ...d.data() }))
           .filter((m) => m.choice === 'yes');
-        setSavedMatches(yesMatches);
+        merged = yesMatches;
       } catch (error) {
-        console.error('Error loading saved matches:', error);
-      } finally {
-        setLoadingSaved(false);
+        console.error('Error loading saved matches from Firestore:', error);
       }
+
+      // Merge with localStorage fallback
+      try {
+        const localRaw = localStorage.getItem(`savedMatches_${user.uid}`);
+        if (localRaw) {
+          const localMatches = JSON.parse(localRaw);
+          const byId = new Map();
+          merged.forEach((m) => {
+            if (m && m.schoolId != null) {
+              byId.set(String(m.schoolId), m);
+            }
+          });
+          (localMatches || []).forEach((m) => {
+            if (m && m.schoolId != null) {
+              const key = String(m.schoolId);
+              byId.set(key, { ...byId.get(key), ...m });
+            }
+          });
+          merged = Array.from(byId.values());
+        }
+      } catch (error) {
+        console.error('Error loading saved matches from localStorage:', error);
+      }
+
+      setSavedMatches(merged);
+      setLoadingSaved(false);
     };
+
     loadSavedMatches();
   }, [user]);
 
@@ -134,7 +163,7 @@ export default function Match() {
 
     if (direction === 'Yes') {
       setSuccessMatch((prev) => [...prev, topSchool]);
-      // Optimistically add to saved matches in-memory
+      // Optimistically add to saved matches in-memory and localStorage
       setSavedMatches((prev) => {
         const existingIndex = prev.findIndex((m) => m.schoolId === topSchool.id);
         const matchData = {
@@ -145,16 +174,24 @@ export default function Match() {
           prefLevel: topSchool.PrefLevel,
           choice: 'yes',
         };
+        let next;
         if (existingIndex >= 0) {
-          const copy = [...prev];
-          copy[existingIndex] = { ...copy[existingIndex], ...matchData };
-          return copy;
+          next = [...prev];
+          next[existingIndex] = { ...next[existingIndex], ...matchData };
+        } else {
+          next = [...prev, matchData];
         }
-        return [...prev, matchData];
+
+        if (user) {
+          try {
+            localStorage.setItem(`savedMatches_${user.uid}`, JSON.stringify(next));
+          } catch (error) {
+            console.error('Error writing saved matches to localStorage:', error);
+          }
+        }
+
+        return next;
       });
-    } else {
-      // Optimistically remove from saved matches in-memory
-      setSavedMatches((prev) => prev.filter((m) => m.schoolId !== topSchool.id));
     }
 
     // Optimistically update the UI immediately
