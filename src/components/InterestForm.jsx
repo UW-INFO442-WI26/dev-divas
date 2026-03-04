@@ -3,15 +3,15 @@ import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { push, ref } from 'firebase/database';  
-import { database } from '../firebase.js'; 
-import "../index.css" 
+import { motion } from 'motion/react';
+import { push, ref } from 'firebase/database';
+import { database, db } from '../firebase.js';
+import { doc, setDoc } from 'firebase/firestore';
+import { useAuth } from '../AuthContext.jsx';
 
-// interest form items
-const surveyJson = 
-{
+const surveyJson = {
   "title": "Interest Form For School Matching",
-  "description": "Select your interests in the following questions and start matching!",
+  "description": "Select your interests in the following questions so we can match you with schools that align with your values and qualifications.",
   "pages": [
     {
       "name": "Questions",
@@ -19,59 +19,28 @@ const surveyJson =
         {
           "type": "tagbox",
           "name": "question1",
-          "title": "What are some key aspect you are looking for in a school?\n",
+          "title": "What are some key aspects you are looking for in a school?",
+          "description": "Select all values that matter most to you in a volunteer placement.",
           "choices": [
-            {
-              "value": "Strong mission",
-              "text": "Strong mission"
-            },
-            {
-              "value": "Friendly staff",
-              "text": "Friendly staff"
-            },
-            {
-              "value": "Flexible worktime",
-              "text": "Flexible worktime"
-            },
-            {
-              "value": "Community service",
-              "text": "Community service"
-            },
-            {
-              "value": "Fun students",
-              "text": "Fun students"
-            }
+            { "value": "Strong mission", "text": "Strong mission" },
+            { "value": "Friendly staff", "text": "Friendly staff" },
+            { "value": "Flexible worktime", "text": "Flexible worktime" },
+            { "value": "Community service", "text": "Community service" },
+            { "value": "Fun students", "text": "Fun students" }
           ]
         },
         {
           "type": "tagbox",
           "name": "question2",
-          "title": "What is your highest level of education?\n",
+          "title": "What is your highest level of education?",
+          "description": "This helps us match you with schools seeking volunteers at your qualification level.",
           "choices": [
-            {
-              "value": "Middle School",
-              "text": "Middle School"
-            },
-            {
-              "value": "High school",
-              "text": "High school"
-            },
-            {
-              "value": "Beyond high school",
-              "text": "Beyond high school"
-            },
-            {
-              "value": "College/University",
-              "text": "College/University"
-            },
-            {
-              "value": "Masters",
-              "text": "Masters"
-            },
-            {
-              "value": "PhD",
-              "text": "PhD"
-            }
+            { "value": "Middle School", "text": "Middle School" },
+            { "value": "High school", "text": "High school" },
+            { "value": "Beyond high school", "text": "Beyond high school" },
+            { "value": "College/University", "text": "College/University" },
+            { "value": "Masters", "text": "Masters" },
+            { "value": "PhD", "text": "PhD" }
           ]
         }
       ]
@@ -80,158 +49,203 @@ const surveyJson =
   "headerView": "advanced"
 };
 
+const surveyTheme = {
+  "themeName": "contrast",
+  "colorPalette": "light",
+  "isPanelless": false,
+  "backgroundImage": "",
+  "backgroundImageFit": "cover",
+  "backgroundImageAttachment": "scroll",
+  "backgroundOpacity": 1,
+  "cssVariables": {
+    "--sjs-editorpanel-backcolor": "rgba(245, 211, 224, 1)",
+    "--sjs-editorpanel-hovercolor": "rgba(246, 212, 223, 1)",
+    "--sjs-questionpanel-hovercolor": "rgba(245, 211, 224, 1)",
+    "--sjs-font-family": "'Inter', system-ui, sans-serif",
+    "--sjs-font-size": "16px",
+    "--sjs-corner-radius": "4px",
+    "--sjs-base-unit": "8px",
+    "--sjs-shadow-small": "0px 0px 0px 2px rgba(0, 0, 0, 1)",
+    "--sjs-shadow-inner": "0px 0px 0px 2px rgba(0, 0, 0, 1),0px -2px 0px 2px rgba(0, 0, 0, 1)",
+    "--sjs-border-default": "rgba(0, 0, 0, 1)",
+    "--sjs-border-light": "rgba(0, 0, 0, 0.2)",
+    "--sjs-general-backcolor": "rgba(255, 255, 255, 1)",
+    "--sjs-general-backcolor-dark": "rgba(255, 216, 77, 1)",
+    "--sjs-general-backcolor-dim-light": "rgba(255, 216, 77, 1)",
+    "--sjs-general-backcolor-dim-dark": "rgba(255, 216, 77, 1)",
+    "--sjs-general-forecolor": "rgba(0, 0, 0, 1)",
+    "--sjs-general-forecolor-light": "rgba(0, 0, 0, 1)",
+    "--sjs-general-dim-forecolor": "rgba(0, 0, 0, 1)",
+    "--sjs-general-dim-forecolor-light": "rgba(0, 0, 0, 1)",
+    "--sjs-secondary-backcolor": "rgba(255, 152, 20, 1)",
+    "--sjs-secondary-backcolor-light": "rgba(255, 152, 20, 0.1)",
+    "--sjs-secondary-backcolor-semi-light": "rgba(255, 152, 20, 0.25)",
+    "--sjs-secondary-forecolor": "rgba(255, 255, 255, 1)",
+    "--sjs-secondary-forecolor-light": "rgba(255, 255, 255, 0.25)",
+    "--sjs-shadow-small-reset": "0px 0px 0px 0px rgba(0, 0, 0, 1)",
+    "--sjs-shadow-medium": "0px 0px 0px 2px rgba(0, 0, 0, 1)",
+    "--sjs-shadow-large": "0px 6px 0px 0px rgba(0, 0, 0, 1)",
+    "--sjs-shadow-inner-reset": "0px 0px 0px 0px rgba(0, 0, 0, 1),0px 0px 0px 0px rgba(0, 0, 0, 1)",
+    "--sjs-border-inside": "rgba(0, 0, 0, 0.16)",
+    "--sjs-special-red-forecolor": "rgba(255, 255, 255, 1)",
+    "--sjs-special-green": "rgba(25, 179, 148, 1)",
+    "--sjs-special-green-light": "rgba(25, 179, 148, 0.1)",
+    "--sjs-special-green-forecolor": "rgba(255, 255, 255, 1)",
+    "--sjs-special-blue": "rgba(67, 127, 217, 1)",
+    "--sjs-special-blue-light": "rgba(67, 127, 217, 0.1)",
+    "--sjs-special-blue-forecolor": "rgba(255, 255, 255, 1)",
+    "--sjs-special-yellow": "rgba(255, 152, 20, 1)",
+    "--sjs-special-yellow-light": "rgba(255, 152, 20, 0.1)",
+    "--sjs-special-yellow-forecolor": "rgba(255, 255, 255, 1)",
+    "--sjs-article-font-xx-large-textDecoration": "none",
+    "--sjs-article-font-xx-large-fontWeight": "700",
+    "--sjs-article-font-xx-large-fontStyle": "normal",
+    "--sjs-article-font-xx-large-fontStretch": "normal",
+    "--sjs-article-font-xx-large-letterSpacing": "0",
+    "--sjs-article-font-xx-large-lineHeight": "64px",
+    "--sjs-article-font-xx-large-paragraphIndent": "0px",
+    "--sjs-article-font-xx-large-textCase": "none",
+    "--sjs-article-font-x-large-textDecoration": "none",
+    "--sjs-article-font-x-large-fontWeight": "700",
+    "--sjs-article-font-x-large-fontStyle": "normal",
+    "--sjs-article-font-x-large-fontStretch": "normal",
+    "--sjs-article-font-x-large-letterSpacing": "0",
+    "--sjs-article-font-x-large-lineHeight": "56px",
+    "--sjs-article-font-x-large-paragraphIndent": "0px",
+    "--sjs-article-font-x-large-textCase": "none",
+    "--sjs-article-font-large-textDecoration": "none",
+    "--sjs-article-font-large-fontWeight": "700",
+    "--sjs-article-font-large-fontStyle": "normal",
+    "--sjs-article-font-large-fontStretch": "normal",
+    "--sjs-article-font-large-letterSpacing": "0",
+    "--sjs-article-font-large-lineHeight": "40px",
+    "--sjs-article-font-large-paragraphIndent": "0px",
+    "--sjs-article-font-large-textCase": "none",
+    "--sjs-article-font-medium-textDecoration": "none",
+    "--sjs-article-font-medium-fontWeight": "700",
+    "--sjs-article-font-medium-fontStyle": "normal",
+    "--sjs-article-font-medium-fontStretch": "normal",
+    "--sjs-article-font-medium-letterSpacing": "0",
+    "--sjs-article-font-medium-lineHeight": "32px",
+    "--sjs-article-font-medium-paragraphIndent": "0px",
+    "--sjs-article-font-medium-textCase": "none",
+    "--sjs-article-font-default-textDecoration": "none",
+    "--sjs-article-font-default-fontWeight": "400",
+    "--sjs-article-font-default-fontStyle": "normal",
+    "--sjs-article-font-default-fontStretch": "normal",
+    "--sjs-article-font-default-letterSpacing": "0",
+    "--sjs-article-font-default-lineHeight": "28px",
+    "--sjs-article-font-default-paragraphIndent": "0px",
+    "--sjs-article-font-default-textCase": "none",
+    "--sjs-general-backcolor-dim": "#f5d3e0",
+    "--sjs-primary-backcolor": "rgba(0, 0, 0, 1)",
+    "--sjs-primary-backcolor-dark": "rgba(83, 83, 83, 1)",
+    "--sjs-primary-backcolor-light": "rgba(245, 211, 224, 1)",
+    "--sjs-primary-forecolor": "rgba(255, 255, 255, 1)",
+    "--sjs-primary-forecolor-light": "rgba(255, 255, 255, 0.25)",
+    "--sjs-special-red": "rgba(156, 2, 39, 1)",
+    "--sjs-special-red-light": "rgba(229, 10, 62, 0.1)",
+    "--sjs-header-backcolor": "rgba(245, 211, 224, 1)"
+  },
+  "header": {
+    "height": 0,
+    "mobileHeight": 0,
+    "inheritWidthFrom": "survey",
+    "textAreaWidth": 0,
+    "backgroundImageFit": "cover",
+    "backgroundImageOpacity": 100,
+    "overlapEnabled": false,
+    "logoPositionX": "left",
+    "logoPositionY": "top",
+    "titlePositionX": "left",
+    "titlePositionY": "bottom",
+    "descriptionPositionX": "left",
+    "descriptionPositionY": "bottom"
+  },
+  "headerView": "advanced"
+};
+
 export default function InterestForm() {
-  const navigate = useNavigate(); // navigate for directing to match
+  const navigate = useNavigate();
   const [surveyCompleted, setSurveyCompleted] = useState(false);
+  const { user } = useAuth();
 
   const survey = new Model(surveyJson);
-  // applying custom theme to survey
-  survey.applyTheme({
-    "themeName": "contrast",
-    "colorPalette": "light",
-    "isPanelless": false,
-    "backgroundImage": "",
-    "backgroundImageFit": "cover",
-    "backgroundImageAttachment": "scroll",
-    "backgroundOpacity": 1,
-    "cssVariables": {
-        "--sjs-editorpanel-backcolor": "rgba(245, 211, 224, 1)",
-        "--sjs-editorpanel-hovercolor": "rgba(246, 212, 223, 1)",
-        "--sjs-questionpanel-hovercolor": "rgba(245, 211, 224, 1)",
-        "--sjs-font-family": "Open Sans",
-        "--sjs-font-size": "16px",
-        "--sjs-corner-radius": "4px",
-        "--sjs-base-unit": "8px",
-        "--sjs-shadow-small": "0px 0px 0px 2px rgba(0, 0, 0, 1)",
-        "--sjs-shadow-inner": "0px 0px 0px 2px rgba(0, 0, 0, 1),0px -2px 0px 2px rgba(0, 0, 0, 1)",
-        "--sjs-border-default": "rgba(0, 0, 0, 1)",
-        "--sjs-border-light": "rgba(0, 0, 0, 0.2)",
-        "--sjs-general-backcolor": "rgba(255, 255, 255, 1)",
-        "--sjs-general-backcolor-dark": "rgba(255, 216, 77, 1)",
-        "--sjs-general-backcolor-dim-light": "rgba(255, 216, 77, 1)",
-        "--sjs-general-backcolor-dim-dark": "rgba(255, 216, 77, 1)",
-        "--sjs-general-forecolor": "rgba(0, 0, 0, 1)",
-        "--sjs-general-forecolor-light": "rgba(0, 0, 0, 1)",
-        "--sjs-general-dim-forecolor": "rgba(0, 0, 0, 1)",
-        "--sjs-general-dim-forecolor-light": "rgba(0, 0, 0, 1)",
-        "--sjs-secondary-backcolor": "rgba(255, 152, 20, 1)",
-        "--sjs-secondary-backcolor-light": "rgba(255, 152, 20, 0.1)",
-        "--sjs-secondary-backcolor-semi-light": "rgba(255, 152, 20, 0.25)",
-        "--sjs-secondary-forecolor": "rgba(255, 255, 255, 1)",
-        "--sjs-secondary-forecolor-light": "rgba(255, 255, 255, 0.25)",
-        "--sjs-shadow-small-reset": "0px 0px 0px 0px rgba(0, 0, 0, 1)",
-        "--sjs-shadow-medium": "0px 0px 0px 2px rgba(0, 0, 0, 1)",
-        "--sjs-shadow-large": "0px 6px 0px 0px rgba(0, 0, 0, 1)",
-        "--sjs-shadow-inner-reset": "0px 0px 0px 0px rgba(0, 0, 0, 1),0px 0px 0px 0px rgba(0, 0, 0, 1)",
-        "--sjs-border-inside": "rgba(0, 0, 0, 0.16)",
-        "--sjs-special-red-forecolor": "rgba(255, 255, 255, 1)",
-        "--sjs-special-green": "rgba(25, 179, 148, 1)",
-        "--sjs-special-green-light": "rgba(25, 179, 148, 0.1)",
-        "--sjs-special-green-forecolor": "rgba(255, 255, 255, 1)",
-        "--sjs-special-blue": "rgba(67, 127, 217, 1)",
-        "--sjs-special-blue-light": "rgba(67, 127, 217, 0.1)",
-        "--sjs-special-blue-forecolor": "rgba(255, 255, 255, 1)",
-        "--sjs-special-yellow": "rgba(255, 152, 20, 1)",
-        "--sjs-special-yellow-light": "rgba(255, 152, 20, 0.1)",
-        "--sjs-special-yellow-forecolor": "rgba(255, 255, 255, 1)",
-        "--sjs-article-font-xx-large-textDecoration": "none",
-        "--sjs-article-font-xx-large-fontWeight": "700",
-        "--sjs-article-font-xx-large-fontStyle": "normal",
-        "--sjs-article-font-xx-large-fontStretch": "normal",
-        "--sjs-article-font-xx-large-letterSpacing": "0",
-        "--sjs-article-font-xx-large-lineHeight": "64px",
-        "--sjs-article-font-xx-large-paragraphIndent": "0px",
-        "--sjs-article-font-xx-large-textCase": "none",
-        "--sjs-article-font-x-large-textDecoration": "none",
-        "--sjs-article-font-x-large-fontWeight": "700",
-        "--sjs-article-font-x-large-fontStyle": "normal",
-        "--sjs-article-font-x-large-fontStretch": "normal",
-        "--sjs-article-font-x-large-letterSpacing": "0",
-        "--sjs-article-font-x-large-lineHeight": "56px",
-        "--sjs-article-font-x-large-paragraphIndent": "0px",
-        "--sjs-article-font-x-large-textCase": "none",
-        "--sjs-article-font-large-textDecoration": "none",
-        "--sjs-article-font-large-fontWeight": "700",
-        "--sjs-article-font-large-fontStyle": "normal",
-        "--sjs-article-font-large-fontStretch": "normal",
-        "--sjs-article-font-large-letterSpacing": "0",
-        "--sjs-article-font-large-lineHeight": "40px",
-        "--sjs-article-font-large-paragraphIndent": "0px",
-        "--sjs-article-font-large-textCase": "none",
-        "--sjs-article-font-medium-textDecoration": "none",
-        "--sjs-article-font-medium-fontWeight": "700",
-        "--sjs-article-font-medium-fontStyle": "normal",
-        "--sjs-article-font-medium-fontStretch": "normal",
-        "--sjs-article-font-medium-letterSpacing": "0",
-        "--sjs-article-font-medium-lineHeight": "32px",
-        "--sjs-article-font-medium-paragraphIndent": "0px",
-        "--sjs-article-font-medium-textCase": "none",
-        "--sjs-article-font-default-textDecoration": "none",
-        "--sjs-article-font-default-fontWeight": "400",
-        "--sjs-article-font-default-fontStyle": "normal",
-        "--sjs-article-font-default-fontStretch": "normal",
-        "--sjs-article-font-default-letterSpacing": "0",
-        "--sjs-article-font-default-lineHeight": "28px",
-        "--sjs-article-font-default-paragraphIndent": "0px",
-        "--sjs-article-font-default-textCase": "none",
-        "--sjs-general-backcolor-dim": "#f5d3e0",
-        "--sjs-primary-backcolor": "rgba(0, 0, 0, 1)",
-        "--sjs-primary-backcolor-dark": "rgba(83, 83, 83, 1)",
-        "--sjs-primary-backcolor-light": "rgba(245, 211, 224, 1)",
-        "--sjs-primary-forecolor": "rgba(255, 255, 255, 1)",
-        "--sjs-primary-forecolor-light": "rgba(255, 255, 255, 0.25)",
-        "--sjs-special-red": "rgba(156, 2, 39, 1)",
-        "--sjs-special-red-light": "rgba(229, 10, 62, 0.1)",
-        "--sjs-header-backcolor": "rgba(245, 211, 224, 1)"
+  survey.applyTheme(surveyTheme);
+
+  const handleSurveyComplete = useCallback(
+    (survey) => {
+      const data = survey.data;
+
+      // Always keep the original demo behavior first
+      localStorage.setItem('userSurveyData', JSON.stringify(data));
+      setSurveyCompleted(true);
+
+      // Fire-and-forget: best-effort write to Realtime DB (demo analytics)
+      try {
+        push(ref(database, 'surveyResults'), data).catch((error) => {
+          console.error('Error saving survey results to Realtime DB:', error);
+        });
+      } catch (error) {
+        console.error('Error initializing Realtime DB write:', error);
+      }
+
+      // If logged in, also persist preferences to the volunteer profile in Firestore
+      if (user) {
+        try {
+          const volunteerRef = doc(db, 'volunteers', user.uid);
+          setDoc(
+            volunteerRef,
+            { preferences: data },
+            { merge: true }
+          ).catch((error) => {
+            console.error('Error saving preferences to Firestore:', error);
+          });
+        } catch (error) {
+          console.error('Error initializing Firestore write:', error);
+        }
+      }
     },
-    "header": {
-        "height": 0,
-        "mobileHeight": 0,
-        "inheritWidthFrom": "survey",
-        "textAreaWidth": 0,
-        "backgroundImageFit": "cover",
-        "backgroundImageOpacity": 100,
-        "overlapEnabled": false,
-        "logoPositionX": "left",
-        "logoPositionY": "top",
-        "titlePositionX": "left",
-        "titlePositionY": "bottom",
-        "descriptionPositionX": "left",
-        "descriptionPositionY": "bottom"
-    },
-    "headerView": "advanced"
-  }  
+    [user]
   );
 
-  // TODO: using local storage for now --> task: update after authentication is implemented
-  const handleSurveyComplete = useCallback((survey) => {
-      push(ref(database, 'surveyResults'), survey.data)
-        .then(() => {
-          console.log('Survey results added to Firebase successfully!');
-          //local storage of survey data for later use in matching page
-          localStorage.setItem('userSurveyData', JSON.stringify(survey.data));
-          setSurveyCompleted(true);
-        })
-        .catch((error) => {
-          console.error('Error adding survey results to Firebase:', error);
-          alert('There was an error saving your results. Please try again.');
-        });
-    }, []);
+  survey.onComplete.add(handleSurveyComplete);
+  survey.showCompletedPage = false;
 
-    survey.onComplete.add(handleSurveyComplete);
-    survey.showCompletedPage = false;
-
-  // handling aftermath of completing the survey
   if (surveyCompleted) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px', backgroundColor: '#f5d3e0', minHeight: '100vh' }}>
-        <h2>Thank you for completing the survey!</h2>
-        <button onClick={() => navigate('/match')} className="finish-button">
-          See Results
-        </button>
-      </div>
+      <main className="pt-16 min-h-screen bg-gradient-to-b from-rose-50 to-white flex items-center justify-center px-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-emerald-100 flex items-center justify-center">
+            <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900">Thank you!</h2>
+          <p className="mt-3 text-gray-500 text-lg max-w-md mx-auto">
+            Your interests have been recorded. Let's find schools that match your preferences.
+          </p>
+          <button
+            onClick={() => navigate('/match')}
+            className="mt-8 px-10 py-4 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold text-lg shadow-lg shadow-rose-200/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+            aria-label="View your school matches"
+          >
+            See Your Matches
+          </button>
+        </motion.div>
+      </main>
     );
   }
 
-  return <Survey model={survey} />;
+  return (
+    <main className="pt-16 min-h-screen bg-rose-50/30">
+      <div className="max-w-3xl mx-auto px-6 py-8">
+        <Survey model={survey} />
+      </div>
+    </main>
+  );
 }
