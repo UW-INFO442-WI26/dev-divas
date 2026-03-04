@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../AuthContext.jsx';
 
@@ -36,6 +36,8 @@ export default function Navigation() {
   const mobileNavLinkClass =
     'block px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors duration-200';
 
+  const accountRef = useRef(null);
+
   const initials = user
     ? (user.displayName || user.email || '')
         .split(' ')
@@ -44,6 +46,21 @@ export default function Navigation() {
         .slice(0, 2)
         .toUpperCase()
     : '';
+
+  useEffect(() => {
+    if (!accountOpen) return;
+    const handleClickOutside = (event) => {
+      if (accountRef.current && !accountRef.current.contains(event.target)) {
+        setAccountOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [accountOpen]);
 
   return (
     <nav
@@ -88,7 +105,7 @@ export default function Navigation() {
               <Link to="/log-in" className={navLinkClass('/log-in')}>Log in</Link>
             )}
             {user && (
-              <div className="relative">
+              <div className="relative" ref={accountRef}>
                 <button
                   type="button"
                   onClick={() => setAccountOpen((open) => !open)}
@@ -150,7 +167,7 @@ export default function Navigation() {
               to="/interest-form"
               className="inline-flex items-center px-5 py-2 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 text-white text-sm font-semibold shadow-lg shadow-rose-200/50 hover:shadow-xl hover:shadow-rose-300/50 hover:-translate-y-0.5 transition-all duration-300"
             >
-              Get started
+              Volunteer Now
             </Link>
           </div>
 
@@ -208,7 +225,7 @@ export default function Navigation() {
                 onClick={closeMobile}
                 className="mx-4 mt-3 text-center px-5 py-2.5 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 text-white text-sm font-semibold shadow-lg shadow-rose-200/50"
               >
-                Get started
+                Volunteer Now
               </Link>
             </div>
           </div>

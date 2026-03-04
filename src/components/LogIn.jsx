@@ -1,8 +1,10 @@
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext.jsx';
 
 export default function LogIn() {
   const { user, loginWithGoogle, logout } = useAuth();
+  const navigate = useNavigate();
 
   if (user) {
     return (
@@ -20,13 +22,22 @@ export default function LogIn() {
           <p className="mt-4 text-sm text-gray-500 text-center">
             Your future profile updates and match history will be associated with this account.
           </p>
-          <button
-            type="button"
-            onClick={logout}
-            className="mt-8 w-full py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold transition-colors cursor-pointer"
-          >
-            Sign out
-          </button>
+          <div className="mt-8 space-y-3">
+            <button
+              type="button"
+              onClick={() => navigate('/interest-form')}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold text-sm shadow-lg shadow-rose-200/50 hover:shadow-xl hover:shadow-rose-300/50 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+            >
+              Start matching schools
+            </button>
+            <button
+              type="button"
+              onClick={logout}
+              className="w-full py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-sm transition-colors cursor-pointer"
+            >
+              Sign out
+            </button>
+          </div>
         </motion.div>
       </main>
     );
