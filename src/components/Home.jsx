@@ -9,8 +9,9 @@ function Home() {
         <h1>Every classroom deserves all the help it needs.</h1>
 
         <p>
-          We match volunteer teachers with schools and organizations
-          that need support the most.
+          We help schools find the support they need by matching them with
+          passionate volunteer educators who are eager to make a difference
+          in students’ learning experiences.
         </p>
 
         <div className="hero-buttons">
@@ -18,6 +19,7 @@ function Home() {
           <button className="volunteer-outline">Volunteer Now!</button>
         </div>
       </section>
+      
 
       <section className="stats">
         <div>
