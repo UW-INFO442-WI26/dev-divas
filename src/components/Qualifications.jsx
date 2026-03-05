@@ -1,78 +1,94 @@
 import 'survey-core/survey-core.css';
 import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
-import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { push, ref } from 'firebase/database';  
-import { database } from '../firebase.js'; 
-import "../index.css" 
+import { useCallback } from 'react';
 
-// interest form items
-const surveyJson = 
-{
-  "title": "Interest Form For School Matching",
-  "description": "Select your interests in the following questions and start matching!",
+const surveyJson = {
   "pages": [
     {
-      "name": "Questions",
+      "name": "page1",
       "elements": [
         {
-          "type": "tagbox",
+          "type": "text",
           "name": "question1",
-          "title": "What are some key aspect you are looking for in a school?\n",
-          "choices": [
-            {
-              "value": "Strong mission",
-              "text": "Strong mission"
-            },
-            {
-              "value": "Friendly staff",
-              "text": "Friendly staff"
-            },
-            {
-              "value": "Flexible worktime",
-              "text": "Flexible worktime"
-            },
-            {
-              "value": "Community service",
-              "text": "Community service"
-            },
-            {
-              "value": "Fun students",
-              "text": "Fun students"
-            }
-          ]
+          "title": "First Name"
         },
         {
-          "type": "tagbox",
+          "type": "text",
           "name": "question2",
-          "title": "What is your highest level of education?\n",
-          "choices": [
+          "title": "Last Name"
+        },
+        {
+          "type": "text",
+          "name": "question6",
+          "title": "DOB",
+          "inputType": "date"
+        }
+      ]
+    },
+    {
+      "name": "page2",
+      "elements": [
+        {
+          "type": "file",
+          "name": "question5",
+          "title": "Upload an ID image (Passport, ID Card, Driver license etc.)"
+        }
+      ]
+    },
+    {
+      "name": "page3",
+      "elements": [
+        {
+          "type": "text",
+          "name": "question9",
+          "title": "Street Address"
+        },
+        {
+          "type": "text",
+          "name": "question8",
+          "title": "City"
+        },
+        {
+          "type": "text",
+          "name": "question10",
+          "title": "State"
+        },
+        {
+          "type": "text",
+          "name": "question11",
+          "title": "Zip Code"
+        },
+        {
+          "type": "text",
+          "name": "question12",
+          "title": "Country"
+        },
+        {
+          "type": "slider",
+          "name": "question7",
+          "title": "How far are you willing to commute? (miles) (You can change this later)",
+          "customLabels": [
+            0,
+            20,
+            40,
+            60,
+            80,
             {
-              "value": "Middle School",
-              "text": "Middle School"
-            },
-            {
-              "value": "High school",
-              "text": "High school"
-            },
-            {
-              "value": "Beyond high school",
-              "text": "Beyond high school"
-            },
-            {
-              "value": "College/University",
-              "text": "College/University"
-            },
-            {
-              "value": "Masters",
-              "text": "Masters"
-            },
-            {
-              "value": "PhD",
-              "text": "PhD"
+              "value": 100,
+              "text": "100+"
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "page4",
+      "elements": [
+        {
+          "type": "text",
+          "name": "question4",
+          "title": "Have you ever been convicted of a felony?"
         }
       ]
     }
@@ -80,12 +96,8 @@ const surveyJson =
   "headerView": "advanced"
 };
 
-export default function InterestForm() {
-  const navigate = useNavigate(); // navigate for directing to match
-  const [surveyCompleted, setSurveyCompleted] = useState(false);
-
+export default function Qualifications() {
   const survey = new Model(surveyJson);
-  // applying custom theme to survey
   survey.applyTheme({
     "themeName": "contrast",
     "colorPalette": "light",
@@ -203,35 +215,12 @@ export default function InterestForm() {
   }  
   );
 
-  // TODO: using local storage for now --> task: update after authentication is implemented
-  const handleSurveyComplete = useCallback((survey) => {
-      push(ref(database, 'surveyResults'), survey.data)
-        .then(() => {
-          console.log('Survey results added to Firebase successfully!');
-          //local storage of survey data for later use in matching page
-          localStorage.setItem('userSurveyData', JSON.stringify(survey.data));
-          setSurveyCompleted(true);
-        })
-        .catch((error) => {
-          console.error('Error adding survey results to Firebase:', error);
-          alert('There was an error saving your results. Please try again.');
-        });
-    }, []);
+  const alertResults = useCallback((survey) => {
+  const results = JSON.stringify(survey.data);
+    alert(results);
+  }, []);
 
-    survey.onComplete.add(handleSurveyComplete);
-    survey.showCompletedPage = false;
-
-  // handling aftermath of completing the survey
-  if (surveyCompleted) {
-    return (
-      <div style={{ textAlign: 'center', padding: '50px', backgroundColor: '#f5d3e0', minHeight: '100vh' }}>
-        <h2>Thank you for completing the survey!</h2>
-        <button onClick={() => navigate('/match')} className="finish-button">
-          See Results
-        </button>
-      </div>
-    );
-  }
+  survey.onComplete.add(alertResults);
 
   return <Survey model={survey} />;
 }
