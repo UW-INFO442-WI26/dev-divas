@@ -229,6 +229,34 @@ export default function Home() {
               </div>
             </Reveal>
           </div>
+
+          <Reveal delay={0.3} className="mt-16 max-w-4xl mx-auto">
+            <div className="p-6 md:p-8 rounded-2xl bg-white shadow-sm border border-rose-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Why education changes lives
+              </h3>
+              <div
+                className="relative w-full overflow-hidden rounded-xl bg-black/5"
+                style={{ aspectRatio: '16 / 9' }}
+              >
+                <iframe
+                  width="560"
+                  height="315"
+                  src="https://www.youtube.com/embed/LIExX9St4oA?si=RC4WNG9_U5Bjzqjr"
+                  title="YouTube video player"
+                  className="w-full h-full border-0"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              </div>
+              <p className="mt-4 text-sm text-gray-600">
+                This short video highlights how improving access to quality education lifts up entire
+                communities—the same goal ImpactU is designed to support.
+              </p>
+            </div>
+          </Reveal>
         </div>
       </section>
 

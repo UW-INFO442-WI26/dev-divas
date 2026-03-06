@@ -72,9 +72,9 @@ export default function Navigation() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="ImpactU — Home">
             <img
-              src="/draft heart logo.jpeg"
-              alt="ImpactU logo"
-              className="h-9 w-auto rounded-lg"
+              src="/impactu-mark.svg"
+              alt="ImpactU school logo"
+              className="h-9 w-9 rounded-lg"
             />
             <span className="text-lg font-bold bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent hidden sm:inline">
               ImpactU
