@@ -30,22 +30,24 @@
 .hero {
   background: #d8b1c3;
   padding: 80px 40px;
+  text-align: center;
 }
 
 .hero h1 {
   font-size: 48px;
   color: #5a0040;
   max-width: 700px;
-  margin-bottom: 20px;
+  margin: 0 auto 20px auto;
 }
 
 .hero p {
   max-width: 600px;
-  margin-bottom: 30px;
+  margin: 0 auto 30px auto;
 }
 
 .hero-buttons {
   display: flex;
+  justify-content: center;
   gap: 20px;
 }
 
@@ -55,14 +57,36 @@
   padding: 12px 20px;
   border-radius: 10px;
   cursor: pointer;
+  color: white;
+  font-weight: bold;
 }
 
 .volunteer-outline {
   background: white;
-  border: none;
+  border: 2px solid #7fb089;
   padding: 12px 20px;
   border-radius: 10px;
   cursor: pointer;
+  font-weight: bold;
+}
+
+.mission {
+  background: #fff5f7;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.mission h2 {
+  font-size: 36px;
+  color: #5a0040;
+  margin-bottom: 20px;
+}
+
+.mission p {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 18px;
+  line-height: 1.6;
 }
 
 .stats {
@@ -70,8 +94,15 @@
   justify-content: space-around;
   padding: 40px;
   background: #f5f5f5;
+  text-align: center;
 }
 
 .stats h2 {
   font-size: 28px;
+  color: #5a0040;
+  margin-bottom: 10px;
+}
+
+.stats p {
+  font-size: 16px;
 }
