@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react"
-// import { motion } from "motion/react"
-import '../css/Match.css';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { collection, doc, getDocs, setDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase.js';
+import { useAuth } from '../AuthContext.jsx';
+import { Link } from 'react-router-dom';
 
-// dummy school data for matching
 export const dummySchools = [
   {
     id: 1,
@@ -36,7 +38,7 @@ export const dummySchools = [
     Values: "Friendly staff, Community service",
     PrefLevel: "Middle School",
     AvailableTime: "August 4, 2026 - Not Set",
-    Description: "Yoshea Elementary School is a newly establied school in rural aareas of Massachusetts. They are in need for volunteers who are qualified to help with their school programs in promoting literacy and mathematics skills. They are looking for volunteers who value strong community connections and services.",
+    Description: "Yoshea Elementary School is a newly established school in rural areas of Massachusetts. They are in need for volunteers who are qualified to help with their school programs in promoting literacy and mathematics skills. They are looking for volunteers who value strong community connections and services.",
     Link: "https://www.yosheaelementaryschool.org",
     Contact: "contact@yosheaelementaryschool.org"
   },
@@ -60,214 +62,501 @@ export const dummySchools = [
     Values: "Fun students, Flexible worktime",
     PrefLevel: "Middle School",
     AvailableTime: "April 29, 2026 - October 20, 2026",
-    Description: "Layhay Primary School has been established since 2010. They are dedicated to make learning fun and engaging for their students. Willing to accomodate volunteers with flexible worktime, they are looking for volunteers who are creative and can help with establishing their fun learning agendas.",
+    Description: "Layhay Primary School has been established since 2010. They are dedicated to make learning fun and engaging for their students. Willing to accommodate volunteers with flexible worktime, they are looking for volunteers who are creative and can help with establishing their fun learning agendas.",
     Link: "https://www.layhayprimaryschool.org",
     Contact: "contact@layhayprimaryschool.org"
   }
-]
+];
 
 export default function Match() {
-  const [schools, setSchools] = useState([])
-  const [lastDirection, setLastDirection] = useState(null)
-  const [matchCount, setMatchCount] = useState(0) // count of matches made
-  const [successMatch, setSuccessMatch] = useState([]) // state for successful match
-  const [selectedSchool, setSelectedSchool] = useState(null)
+  const [schools, setSchools] = useState([]);
+  const [lastDirection, setLastDirection] = useState(null);
+  const [matchCount, setMatchCount] = useState(0);
+  const [successMatch, setSuccessMatch] = useState([]);
+  const [selectedSchool, setSelectedSchool] = useState(null);
+  const [savedMatches, setSavedMatches] = useState([]);
+  const [loadingSaved, setLoadingSaved] = useState(true);
+  const { user } = useAuth();
 
-  // using the locally stored survey data to filter the dummy school data for matching
-  // TODO: maybe should've used the database?
   useEffect(() => {
-    const userData = localStorage.getItem('userSurveyData')
+    const userData = localStorage.getItem('userSurveyData');
     if (userData) {
-      const surveyData = JSON.parse(userData)
-      const userInterests = surveyData.question1 || [] 
-      const userEducation = surveyData.question2 || [] 
+      const surveyData = JSON.parse(userData);
+      const userInterests = surveyData.question1 || [];
+      const userEducation = surveyData.question2 || [];
 
-      // filter schools based on user interests and education level
-      const filteredSchools = dummySchools.filter(school => {
-        // split by values and match possible interests
-        const schoolValues = school.Values.split(',').map(v => v.trim())
-        const interestMatch = userInterests.some(interest => schoolValues.includes(interest))
+      const filteredSchools = dummySchools.filter((school) => {
+        const schoolValues = school.Values.split(',').map((v) => v.trim());
+        const interestMatch = userInterests.some((interest) => schoolValues.includes(interest));
 
-        // if statements handlling bars for education levels
-        const educationMatch = userEducation.some(edu => {
-          // handling middle school cases
-          if (edu === "Middle School") return school.PrefLevel === "Middle School" 
-          // this works for now since the dummy data's lowest bar for edu level is high school and beyond
-          if (edu === "High school" || edu === "Beyond high school" || edu === "College/University" || edu === "Masters" || edu === "PhD") return school.PrefLevel === "High school"
-          return false // edge case, return false since the input is unknown
-        })
+        const educationMatch = userEducation.some((edu) => {
+          if (edu === 'Middle School') return school.PrefLevel === 'Middle School';
+          if (['High school', 'Beyond high school', 'College/University', 'Masters', 'PhD'].includes(edu))
+            return school.PrefLevel === 'High school';
+          return false;
+        });
 
-        return interestMatch && educationMatch
-      })
+        return interestMatch && educationMatch;
+      });
 
-      setSchools(filteredSchools) // set results
-      setMatchCount(filteredSchools.length) // set match count
-    
-    } else {
-      // no user input
-      <p>Please complete the survey.</p>
+      setSchools(filteredSchools);
+      setMatchCount(filteredSchools.length);
     }
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setSavedMatches([]);
+      setLoadingSaved(false);
+      return;
+    }
+
+    // 1) Load from localStorage immediately so the UI updates fast
+    try {
+      const localRaw = localStorage.getItem(`savedMatches_${user.uid}`);
+      if (localRaw) {
+        const localMatches = JSON.parse(localRaw) || [];
+        setSavedMatches(localMatches);
+      } else {
+        setSavedMatches([]);
+      }
+    } catch (error) {
+      console.error('Error loading saved matches from localStorage:', error);
+      setSavedMatches([]);
+    } finally {
+      setLoadingSaved(false);
+    }
+
+    // 2) Refresh from Firestore in the background and merge
+    (async () => {
+      try {
+        const snap = await getDocs(collection(db, 'volunteers', user.uid, 'matches'));
+        const yesMatches = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          .filter((m) => m.choice === 'yes');
+
+        setSavedMatches((prev) => {
+          const byId = new Map();
+          (prev || []).forEach((m) => {
+            if (m && m.schoolId != null) byId.set(String(m.schoolId), m);
+          });
+          (yesMatches || []).forEach((m) => {
+            if (m && m.schoolId != null) byId.set(String(m.schoolId), m);
+          });
+          const merged = Array.from(byId.values());
+
+          // Keep localStorage in sync
+          try {
+            localStorage.setItem(`savedMatches_${user.uid}`, JSON.stringify(merged));
+          } catch (error) {
+            console.error('Error writing merged saved matches to localStorage:', error);
+          }
+
+          return merged;
+        });
+      } catch (error) {
+        console.error('Error loading saved matches from Firestore:', error);
+      }
+    })();
+  }, [user]);
 
   const removeTopCard = (direction) => {
-    if (!schools.length) return
-    setLastDirection(direction)
-    setSchools(prev => prev.slice(0, -1))
-    if (direction === "Yes") {
-      setSuccessMatch(prev => [...prev, schools[schools.length - 1]])
-    }
-  }
+    if (!schools.length) return;
+    setLastDirection(direction);
 
-  const openModal = (school) => {
-    setSelectedSchool(school)
-  }
+    const topSchool = schools[schools.length - 1];
 
-  const closeModal = () => {
-    setSelectedSchool(null)
-  }
-
-  return (
-    <div className="container">
-      {/* title: render how many schools matched  */}
-      <h1 className="title">
-        Matched Schools ({schools.length}/{matchCount})
-      </h1>
-      {/* conditions: different situations for rendering match results */}
-      {(() => {
-        // no initial matches at all
-        if (matchCount === 0) {
-          return (
-            <p>
-              There are no schools matched. Please retake the survey or contact
-              us for more options.
-            </p>
-          )
+    if (direction === 'Yes') {
+      setSuccessMatch((prev) => [...prev, topSchool]);
+      // Optimistically add to saved matches in-memory and localStorage
+      setSavedMatches((prev) => {
+        const existingIndex = prev.findIndex((m) => m.schoolId === topSchool.id);
+        const matchData = {
+          schoolId: topSchool.id,
+          schoolName: topSchool.Name,
+          location: topSchool.Location,
+          values: topSchool.Values,
+          prefLevel: topSchool.PrefLevel,
+          choice: 'yes',
+        };
+        let next;
+        if (existingIndex >= 0) {
+          next = [...prev];
+          next[existingIndex] = { ...next[existingIndex], ...matchData };
+        } else {
+          next = [...prev, matchData];
         }
 
-        // have matches and have schools to swipe/select
-        if (schools.length > 0) {
-          return (
-            <>
-              <div className="card-container">
+        if (user) {
+          try {
+            localStorage.setItem(`savedMatches_${user.uid}`, JSON.stringify(next));
+          } catch (error) {
+            console.error('Error writing saved matches to localStorage:', error);
+          }
+        }
+
+        return next;
+      });
+    }
+
+    // Optimistically update the UI immediately
+    setSchools((prev) => prev.slice(0, -1));
+
+    // Best-effort persistence that never blocks UI
+    if (user && topSchool && direction === 'Yes') {
+      try {
+        const matchRef = doc(db, 'volunteers', user.uid, 'matches', String(topSchool.id));
+        const matchData = {
+          schoolId: topSchool.id,
+          schoolName: topSchool.Name,
+          location: topSchool.Location,
+          values: topSchool.Values,
+          prefLevel: topSchool.PrefLevel,
+          choice: 'yes',
+          updatedAt: serverTimestamp(),
+        };
+        setDoc(matchRef, matchData, { merge: true }).catch((error) => {
+          console.error('Error saving match:', error);
+        });
+      } catch (error) {
+        console.error('Error initializing match save:', error);
+      }
+    }
+  };
+
+  return (
+    <main className="pt-16 min-h-screen bg-gradient-to-b from-pink-50/60 to-white">
+      <div className="max-w-4xl mx-auto px-6 py-20">
+        {!user && (
+          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <span className="font-semibold">Heads up:</span>{' '}
+            You can try the matching demo, but your choices won&apos;t be saved.{' '}
+            <Link to="/log-in" className="underline font-semibold hover:text-amber-900">
+              Sign in to save your matches.
+            </Link>
+          </div>
+        )}
+
+        {user && savedMatches.length > 0 && (
+          <div className="mb-6 flex items-center justify-between gap-3 text-sm">
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white text-[10px] font-semibold">
+                {savedMatches.length}
+              </span>
+              <span>
+                Saved match{savedMatches.length === 1 ? '' : 'es'}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500">
+              These are schools you previously liked. Scroll down to see them.
+            </p>
+          </div>
+        )}
+
+        {/* Header */}
+        {matchCount > 0 && (
+          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="text-left">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-3xl sm:text-4xl font-bold text-gray-900"
+              >
+                Review your matches{' '}
+                <span className="text-rose-500 text-xl align-middle">
+                  ({schools.length}/{matchCount})
+                </span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="mt-2 text-gray-500 text-sm sm:text-base max-w-xl"
+              >
+                Each card represents a school that aligns with your interests and education level.
+                Choose <span className="font-semibold text-emerald-600">Yes</span> to save a school
+                to your matches or <span className="font-semibold text-gray-500">No</span> to skip it.
+              </motion.p>
+            </div>
+            <div className="mt-2 md:mt-0 text-sm text-gray-500 bg-white/80 border border-gray-100 rounded-2xl px-4 py-3 shadow-sm">
+              <p className="font-semibold text-gray-800 mb-1">How it works</p>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>Cards are ordered from best match to least.</li>
+                <li>Drag a card or use the buttons below.</li>
+                <li>Your Yes choices are saved to your account when signed in.</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Saved matches gallery */}
+        {user && !loadingSaved && savedMatches.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-base font-semibold text-gray-900 mb-2">
+              Your saved schools
+            </h2>
+            <p className="text-xs text-gray-500 mb-3">
+              These are schools you previously liked. Tap any card to see details again.
+            </p>
+            <div className="flex gap-4 overflow-x-auto pb-2">
+              {savedMatches.map((match) => {
+                const school =
+                  dummySchools.find((s) => s.id === match.schoolId) ||
+                  dummySchools.find((s) => String(s.id) === String(match.schoolId));
+                return (
+                  <button
+                    key={match.schoolId || match.id}
+                    type="button"
+                    onClick={() => school && setSelectedSchool(school)}
+                    className="min-w-[220px] max-w-[240px] text-left bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                  >
+                    {school && (
+                      <div
+                        className="h-28 w-full rounded-t-2xl bg-cover bg-center"
+                        style={{ backgroundImage: `url(${school.Picture})` }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <div className="p-3">
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {match.schoolName}
+                      </p>
+                      <p className="mt-1 text-[11px] text-gray-500 truncate">
+                        {match.location}
+                      </p>
+                      <p className="mt-1 text-[11px] text-gray-400 line-clamp-2">
+                        {match.values}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* No new matches from the current survey */}
+        {matchCount === 0 && savedMatches.length === 0 && (
+          <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100" role="status">
+            <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-xl text-gray-500 font-medium">No matches found</p>
+            <p className="mt-2 text-gray-400">Please complete the interest survey or contact us for more options.</p>
+          </div>
+        )}
+
+        {/* Swipe cards */}
+        {schools.length > 0 && (
+          <>
+            <div className="relative flex justify-center items-center h-[420px]" aria-label="Swipeable school cards">
+              <AnimatePresence>
                 {schools.map((school, index) => {
-                  const isTop = index === schools.length - 1
+                  const isTop = index === schools.length - 1;
                   return (
-                    <div
+                    <motion.div
                       key={school.id}
-                      className="swipe"
-                      drag={isTop ? "x" : false}
-                      onDragEnd={(event, info) => {
-                        if (info.offset.x > 100) removeTopCard("No")
-                        else if (info.offset.x < -100) removeTopCard("Yes")
-                      }}
-                      dragConstraints={{ left: 0, right: 0 }}
-                      whileTap={{ scale: 0.95 }}
+                      className="absolute cursor-pointer"
                       style={{ zIndex: index }}
+                      drag={isTop ? 'x' : false}
+                      dragConstraints={{ left: 0, right: 0 }}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x > 100) removeTopCard('Yes');
+                        else if (info.offset.x < -100) removeTopCard('No');
+                      }}
+                      whileTap={isTop ? { scale: 0.97 } : {}}
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{
+                        scale: isTop ? 1 : 0.95 - (schools.length - 1 - index) * 0.03,
+                        opacity: 1,
+                        y: (schools.length - 1 - index) * 8,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        x: lastDirection === 'Yes' ? -300 : 300,
+                        rotate: lastDirection === 'Yes' ? -15 : 15,
+                      }}
+                      transition={{ type: 'spring', damping: 20 }}
+                      onClick={() => isTop && setSelectedSchool(school)}
+                      aria-label={`${school.Name} in ${school.Location}. Drag left to accept, right to skip.`}
                     >
-                      <div className="card" onClick={() => openModal(school)}>
+                      <div className="w-72 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
                         <div
-                          className="card-image"
+                          className="h-56 bg-cover bg-center"
                           style={{ backgroundImage: `url(${school.Picture})` }}
-                        ></div>
-                        <div className="card-info">
-                          <h3>{school.Name}</h3>
-                          <p>Qualifications: {school.PrefLevel}</p>
-                          <p>{school.Location}</p>
-                          <div className="tags">
-                            {school.Values.split(",").map((value, idx) => (
-                              <span key={idx} className="tag">
-                                {value.trim()}
+                          role="img"
+                          aria-label={`${school.Name} campus`}
+                        />
+                        <div className="p-4">
+                          <h3 className="font-bold text-gray-900">{school.Name}</h3>
+                          <p className="text-sm text-gray-500">{school.Location}</p>
+                          <p className="text-xs text-gray-400 mt-1">Level: {school.PrefLevel}</p>
+                          <div className="flex flex-wrap gap-1.5 mt-3">
+                            {school.Values.split(',').map((val, i) => (
+                              <span key={i} className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 text-xs font-medium">
+                                {val.trim()}
                               </span>
                             ))}
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )
+                    </motion.div>
+                  );
                 })}
-              </div>
+              </AnimatePresence>
+            </div>
 
-              <div className="buttons">
-                <button onClick={() => removeTopCard("Yes")}>Yes</button>
-                <button onClick={() => removeTopCard("No")}>No</button>
-              </div>
+            <div className="flex justify-center gap-6 mt-8" role="group" aria-label="Accept or skip the current school">
+              <button
+                onClick={() => removeTopCard('Yes')}
+                className="px-10 py-3 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 text-white font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+                aria-label="Accept this school"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => removeTopCard('No')}
+                className="px-10 py-3 rounded-full bg-gradient-to-r from-gray-300 to-gray-400 text-white font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+                aria-label="Skip this school"
+              >
+                No
+              </button>
+            </div>
 
-              {lastDirection && (
-                <h2 className="infoText">You chose {lastDirection}</h2>
-              )}
-            </>
-          )
-        }
+            {lastDirection && (
+              <motion.p
+                key={lastDirection + schools.length}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center mt-4 text-lg font-semibold text-gray-600"
+                role="status"
+                aria-live="polite"
+              >
+                You chose{' '}
+                <span className={lastDirection === 'Yes' ? 'text-emerald-500' : 'text-gray-400'}>
+                  {lastDirection}
+                </span>
+              </motion.p>
+            )}
+          </>
+        )}
 
-        // there are matched but user selected "No" for all of them
-        if (successMatch.length === 0) {
-          return <p>No matches selected. Please retake the survey to try again.</p>
-        }
+        {/* No schools selected after swiping */}
+        {matchCount > 0 && schools.length === 0 && successMatch.length === 0 && (
+          <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100" role="status">
+            <p className="text-xl text-gray-500 font-medium">No matches selected</p>
+            <p className="mt-2 text-gray-400">
+              You reached the end of your matches without saving any schools.
+            </p>
+            <Link
+              to="/interest-form"
+              className="inline-flex mt-6 px-6 py-2.5 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 text-white text-sm font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+            >
+              Retake interest survey
+            </Link>
+          </div>
+        )}
 
-        // render school cards that user has selected "Yes" for
-        return (
-          <>
-            <h2 className="congrats">
-              Congratulations! You have matched with these schools!
-            </h2>
-            <div className="congrats-card-container">
+        {/* Congratulations matched schools */}
+        {matchCount > 0 && schools.length === 0 && successMatch.length > 0 && (
+          <div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-2xl font-bold text-center text-gray-900 mb-8"
+            >
+              Congratulations! You matched with these schools!
+            </motion.h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {successMatch.map((school, index) => (
-                <div key={index} className="congrats-card" onClick={() => openModal(school)}>
-                  <img
-                    src={school.Picture}
-                    alt={school.Name}
-                    className="card-image"
-                  />
-                  <div className="card-info">
-                    <p>{school.Name}</p>
-                    <p>Location: {school.Location}</p>
-                    <p>Qualifications: {school.PrefLevel}</p>
-                    <div className="tags">
-                      {school.Values.split(",").map((value, idx) => (
-                        <span key={idx} className="tag">
-                          {value.trim()}
+                <motion.div
+                  key={school.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100"
+                  onClick={() => setSelectedSchool(school)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && setSelectedSchool(school)}
+                  aria-label={`View details for matched school: ${school.Name}`}
+                >
+                  <img src={school.Picture} alt={`${school.Name} campus`} className="w-full h-40 object-cover" loading="lazy" />
+                  <div className="p-4">
+                    <h3 className="font-bold text-gray-900">{school.Name}</h3>
+                    <p className="text-sm text-gray-500">{school.Location}</p>
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {school.Values.split(',').map((val, i) => (
+                        <span key={i} className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 text-xs font-medium">
+                          {val.trim()}
                         </span>
                       ))}
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </>
-        )
-      })()}
-
-      {selectedSchool && (
-        <div className="modal-container" onClick={closeModal}>
-          <div className="modal" onClick={(event) => event.stopPropagation()}>
-            <img
-              className="modal-image"
-              src={selectedSchool.Picture}
-              alt={selectedSchool.Name}
-            />
-            <h2 className="modal-title">{selectedSchool.Name}</h2>
-            <p className="modal-text">Location: {selectedSchool.Location || "Not available"}</p>
-            <p className="modal-text">Values: {selectedSchool.Values || "Not available"}</p>
-            <p className="modal-text">Preferred Level: {selectedSchool.PrefLevel || "Not available"}</p>
-            <p className="modal-text">Available Time: {selectedSchool.AvailableTime || "Not available"}</p>
-            <p className="modal-text">Description: {selectedSchool.Description || "Not available"}</p>
-            <p className="modal-text"><span className="text-highlight">Contact: {selectedSchool.Contact || "Not available"} </span></p>
-            <p className="modal-text">
-              Link:{" "}
-              {selectedSchool.Link ? (
-                <a href={selectedSchool.Link} target="_blank" rel="noreferrer">
-                  {selectedSchool.Link}
-                </a>
-              ) : (
-                "Not available"
-              )}
-            </p>
-            <button className="modal-close" onClick={closeModal}>
-              Close
-            </button>
           </div>
-        </div>
-      )}
-    </div>
-  )
+        )}
+
+        {/* School detail modal */}
+        <AnimatePresence>
+          {selectedSchool && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+              onClick={() => setSelectedSchool(null)}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Details for ${selectedSchool.Name}`}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ type: 'spring', damping: 25 }}
+                className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img src={selectedSchool.Picture} alt={`${selectedSchool.Name} campus`} className="w-full h-64 object-cover rounded-t-2xl" />
+                <div className="p-8 space-y-4">
+                  <h2 className="text-2xl font-bold text-gray-900">{selectedSchool.Name}</h2>
+                  <dl className="space-y-3 text-gray-600">
+                    <div><dt className="inline font-semibold text-gray-800">Location: </dt><dd className="inline">{selectedSchool.Location}</dd></div>
+                    <div><dt className="inline font-semibold text-gray-800">Values: </dt><dd className="inline">{selectedSchool.Values}</dd></div>
+                    <div><dt className="inline font-semibold text-gray-800">Preferred Level: </dt><dd className="inline">{selectedSchool.PrefLevel}</dd></div>
+                    <div><dt className="inline font-semibold text-gray-800">Available: </dt><dd className="inline">{selectedSchool.AvailableTime || 'Not available'}</dd></div>
+                    <div><dt className="inline font-semibold text-gray-800">Description: </dt><dd className="inline">{selectedSchool.Description || 'Not available'}</dd></div>
+                    <div className="bg-rose-50 rounded-lg px-4 py-2">
+                      <dt className="inline font-semibold text-gray-800">Contact: </dt>
+                      <dd className="inline">{selectedSchool.Contact || 'Not available'}</dd>
+                    </div>
+                    {selectedSchool.Link && (
+                      <div>
+                        <dt className="inline font-semibold text-gray-800">Website: </dt>
+                        <dd className="inline">
+                          <a href={selectedSchool.Link} target="_blank" rel="noreferrer" className="text-rose-500 hover:text-rose-600 underline underline-offset-2">
+                            {selectedSchool.Link}
+                          </a>
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+                  <button
+                    onClick={() => setSelectedSchool(null)}
+                    className="mt-4 w-full py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors cursor-pointer"
+                    aria-label="Close school details"
+                  >
+                    Close
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </main>
+  );
 }
