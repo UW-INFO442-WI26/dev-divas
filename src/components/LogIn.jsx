@@ -1,10 +1,29 @@
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '../AuthContext.jsx';
 
 export default function LogIn() {
   const { user, loginWithGoogle, logout } = useAuth();
   const navigate = useNavigate();
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [authError, setAuthError] = useState('');
+
+  const handleGoogleLogin = async () => {
+    setAuthError('');
+    setIsSigningIn(true);
+    try {
+      await loginWithGoogle();
+    } catch (error) {
+      if (error?.code === 'auth/unauthorized-domain') {
+        setAuthError('This domain is not authorized in Firebase Auth. Add it in Firebase Console > Authentication > Settings > Authorized domains.');
+      } else {
+        setAuthError('Google sign-in failed. Please try again in an incognito window or refresh and retry.');
+      }
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
 
   if (user) {
     return (
@@ -69,11 +88,18 @@ export default function LogIn() {
 
           <button
             type="button"
-            onClick={loginWithGoogle}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold text-lg shadow-lg shadow-rose-200/50 hover:shadow-xl hover:shadow-rose-300/50 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+            onClick={handleGoogleLogin}
+            disabled={isSigningIn}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold text-lg shadow-lg shadow-rose-200/50 hover:shadow-xl hover:shadow-rose-300/50 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Continue with Google
+            {isSigningIn ? 'Signing in...' : 'Continue with Google'}
           </button>
+
+          {authError && (
+            <p className="text-xs text-red-600" role="alert">
+              {authError}
+            </p>
+          )}
         </div>
       </motion.div>
     </main>
