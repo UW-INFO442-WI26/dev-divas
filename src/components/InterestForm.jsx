@@ -35,7 +35,7 @@ const surveyJson = {
           "title": "What is your highest level of education?",
           "description": "This helps us match you with schools seeking volunteers at your qualification level.",
           "choices": [
-            { "value": "Middle School", "text": "Middle School" },
+            { "value": "Middle school", "text": "Middle school" },
             { "value": "High school", "text": "High school" },
             { "value": "Beyond high school", "text": "Beyond high school" },
             { "value": "College/University", "text": "College/University" },

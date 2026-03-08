@@ -26,6 +26,7 @@ export default function LogIn() {
             <button
               type="button"
               onClick={() => navigate('/interest-form')}
+              aria-label={"Click to go fill out interest form and start matching to schools"}
               className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold text-sm shadow-lg shadow-rose-200/50 hover:shadow-xl hover:shadow-rose-300/50 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
             >
               Start matching schools
@@ -33,6 +34,7 @@ export default function LogIn() {
             <button
               type="button"
               onClick={logout}
+              aria-label="Click to sign out of your account"
               className="w-full py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-sm transition-colors cursor-pointer"
             >
               Sign out
