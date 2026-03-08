@@ -10,18 +10,18 @@ Focusing on SDG 4: Quality Education, our HMW statement follows:
 ---
 
 # Group Members
-- Deb (Sign in authentication & design)
-- Nicole (Matching feature and school rendering)
-- Jackie (CSS implentation and fixing bugs)
-- Reasha (Homepage)
-- Andrew (Contact and profile)
-- Mouna (Swiping cards in matching)
+- Deborah Markos - dbrhmrks (Sign in authentication & design)
+- Nicole Kening Li - NicoleKeningLi (Matching feature and school cards rendering)
+- Jackie Tran - bunnyeum (CSS implentation and fixing bugs)
+- Reasha Vora - rv153 (Homepage)
+- Andrew Rizo - arizo32 (Contact and profile)
+- Mouna Abrous - mabrous (Swiping cards in matching)
 
 ---
 
 # Features
-- **Matching** between volunteers and schools
 - **Interest form** for extracting user perference
+- **Matching** between volunteers and schools
 - **Log in** to store matched results
 
 ---
@@ -40,20 +40,23 @@ Focusing on SDG 4: Quality Education, our HMW statement follows:
 
 ---
 
-# Developer Information
+# Tech Stack
 
 Built with:
 
 - React JS
 - HTML, CSS, JavaScript
 - Firebase
-- Libraries (Survey.js, tailwind CSS)
+- Libraries (Survey.js)
+- Tailwind CSS
 
 ---
 
 # Testing Protocol
 
 [Testing Protocol](public/Prototype-and-Testing-Protocol.pdf)
+
+---
 
 # React + Vite
 
