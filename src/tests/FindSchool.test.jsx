@@ -22,16 +22,16 @@ describe("FindSchool route", () => {
     expect(cards.length).toBeGreaterThan(0);
 
     const firstCard = cards[0];
-    const cardScope = within(firstCard);
+    const inCard = within(firstCard);
 
-    expect(cardScope.getByRole("img", { name: /school campus in/i })).toBeInTheDocument();
-    expect(cardScope.getByRole("heading", { name: firstSchool.Name })).toBeInTheDocument();
-    expect(cardScope.getByText(firstSchool.Location)).toBeInTheDocument();
-    expect(cardScope.getByText(/Preferred level:/i)).toBeInTheDocument();
+    expect(inCard.getByRole("img", { name: /school campus in/i })).toBeInTheDocument();
+    expect(inCard.getByRole("heading", { name: firstSchool.Name })).toBeInTheDocument();
+    expect(inCard.getByText(firstSchool.Location)).toBeInTheDocument();
+    expect(inCard.getByText(/Preferred level:/i)).toBeInTheDocument();
 
     const values = firstSchool.Values.split(",").map((value) => value.trim());
     values.forEach((value) => {
-      expect(cardScope.getByText(value)).toBeInTheDocument();
+      expect(inCard.getByText(value)).toBeInTheDocument();
     });
   });
 });

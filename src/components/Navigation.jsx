@@ -155,6 +155,7 @@ export default function Navigation() {
                       onClick={() => {
                         setAccountOpen(false);
                         logout();
+                        navigate('/');
                       }}
                     >
                       Sign out
