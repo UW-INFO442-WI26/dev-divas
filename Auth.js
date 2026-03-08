@@ -1,6 +1,6 @@
-import { auth, db } from "./src/firebase.js";
+import { auth, database } from "./src/firebase.js";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { get, ref, set } from "firebase/database";
 
 const provider = new GoogleAuthProvider();
 
@@ -10,19 +10,19 @@ export const signUpWithGoogle = async () => {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    // Check if user already exists in Firestore
-    const userRef = doc(db, "volunteers", user.uid);
-    const userSnap = await getDoc(userRef);
+    // Check if user already exists in Realtime Database
+    const userRef = ref(database, `volunteers/${user.uid}`);
+    const userSnap = await get(userRef);
 
     if (!userSnap.exists()) {
       // Create new volunteer profile
-      await setDoc(userRef, {
+      await set(userRef, {
         uid: user.uid,
         name: user.displayName,
         email: user.email,
         qualifications: [],
         preferences: [],
-        createdAt: new Date()
+        createdAt: Date.now()
       });
     }
 

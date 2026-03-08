@@ -4,9 +4,8 @@ import { Survey } from 'survey-react-ui';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { push, ref } from 'firebase/database';
-import { database, db } from '../firebase.js';
-import { doc, setDoc } from 'firebase/firestore';
+import { push, ref, update } from 'firebase/database';
+import { database } from '../firebase.js';
 import { useAuth } from '../AuthContext.jsx';
 
 const surveyJson = {
@@ -190,19 +189,15 @@ export default function InterestForm() {
         console.error('Error initializing Realtime DB write:', error);
       }
 
-      // If logged in, also persist preferences to the volunteer profile in Firestore
+      // If logged in, also persist preferences to the volunteer profile in Realtime DB
       if (user) {
         try {
-          const volunteerRef = doc(db, 'volunteers', user.uid);
-          setDoc(
-            volunteerRef,
-            { preferences: data },
-            { merge: true }
-          ).catch((error) => {
-            console.error('Error saving preferences to Firestore:', error);
+          const volunteerRef = ref(database, `volunteers/${user.uid}`);
+          update(volunteerRef, { preferences: data }).catch((error) => {
+            console.error('Error saving preferences to Realtime DB:', error);
           });
         } catch (error) {
-          console.error('Error initializing Firestore write:', error);
+          console.error('Error initializing Realtime DB write:', error);
         }
       }
     },

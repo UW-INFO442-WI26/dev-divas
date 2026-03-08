@@ -2,8 +2,8 @@ import 'survey-core/survey-core.css';
 import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
 import { useCallback, useEffect, useState } from 'react';
-import { db } from '../firebase.js';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { database } from '../firebase.js';
+import { get, ref, update } from 'firebase/database';
 import { useAuth } from '../AuthContext.jsx';
 
 const surveyJson = {
@@ -205,15 +205,11 @@ export default function Qualifications() {
         console.error('Error saving profile to localStorage:', error);
       }
 
-      // Fire-and-forget persistence to Firestore so UI isn't blocked
+      // Fire-and-forget persistence to Realtime DB so UI isn't blocked
       (async () => {
         try {
-          const volunteerRef = doc(db, 'volunteers', user.uid);
-          await setDoc(
-            volunteerRef,
-            { profile: data },
-            { merge: true }
-          );
+          const volunteerRef = ref(database, `volunteers/${user.uid}`);
+          await update(volunteerRef, { profile: data });
         } catch (error) {
           console.error('Error saving profile:', error);
         }
@@ -252,13 +248,13 @@ export default function Qualifications() {
     survey.data = merged;
     setLoading(false);
 
-    // 2) Refresh from Firestore in the background and merge
+    // 2) Refresh from Realtime DB in the background and merge
     (async () => {
       try {
-        const volunteerRef = doc(db, 'volunteers', user.uid);
-        const snap = await getDoc(volunteerRef);
-        if (snap.exists() && snap.data().profile) {
-          const remote = snap.data().profile;
+        const volunteerRef = ref(database, `volunteers/${user.uid}`);
+        const snap = await get(volunteerRef);
+        if (snap.exists() && snap.val().profile) {
+          const remote = snap.val().profile;
           const next = { ...merged, ...remote };
           survey.data = next;
           try {
@@ -268,7 +264,7 @@ export default function Qualifications() {
           }
         }
       } catch (error) {
-        console.error('Error loading existing profile from Firestore:', error);
+        console.error('Error loading existing profile from Realtime DB:', error);
       }
     })();
   }, [user, survey]);

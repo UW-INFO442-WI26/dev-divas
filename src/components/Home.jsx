@@ -245,7 +245,6 @@ export default function Home() {
                   src="https://www.youtube.com/embed/LIExX9St4oA?si=RC4WNG9_U5Bjzqjr"
                   title="YouTube video player"
                   className="w-full h-full border-0"
-                  frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerPolicy="strict-origin-when-cross-origin"
                   allowFullScreen

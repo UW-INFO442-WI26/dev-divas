@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { collection, doc, getDocs, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase.js';
+import { get, ref, serverTimestamp, update } from 'firebase/database';
+import { database } from '../firebase.js';
 import { useAuth } from '../AuthContext.jsx';
 import { Link } from 'react-router-dom';
 
@@ -187,12 +187,13 @@ export default function Match() {
       setLoadingSaved(false);
     }
 
-    // 2) Refresh from Firestore in the background and merge
+    // 2) Refresh from Realtime DB in the background and merge
     (async () => {
       try {
-        const snap = await getDocs(collection(db, 'volunteers', user.uid, 'matches'));
-        const yesMatches = snap.docs
-          .map((d) => ({ id: d.id, ...d.data() }))
+        const matchesRef = ref(database, `volunteers/${user.uid}/matches`);
+        const snap = await get(matchesRef);
+        const remoteMatches = snap.exists() ? Object.values(snap.val()) : [];
+        const yesMatches = remoteMatches
           .filter((m) => m.choice === 'yes');
 
         setSavedMatches((prev) => {
@@ -215,7 +216,7 @@ export default function Match() {
           return merged;
         });
       } catch (error) {
-        console.error('Error loading saved matches from Firestore:', error);
+        console.error('Error loading saved matches from Realtime DB:', error);
       }
     })();
   }, [user]);
@@ -265,7 +266,7 @@ export default function Match() {
     // Best-effort persistence that never blocks UI
     if (user && topSchool && direction === 'Yes') {
       try {
-        const matchRef = doc(db, 'volunteers', user.uid, 'matches', String(topSchool.id));
+        const matchRef = ref(database, `volunteers/${user.uid}/matches/${topSchool.id}`);
         const matchData = {
           schoolId: topSchool.id,
           schoolName: topSchool.Name,
@@ -275,7 +276,7 @@ export default function Match() {
           choice: 'yes',
           updatedAt: serverTimestamp(),
         };
-        setDoc(matchRef, matchData, { merge: true }).catch((error) => {
+        update(matchRef, matchData).catch((error) => {
           console.error('Error saving match:', error);
         });
       } catch (error) {

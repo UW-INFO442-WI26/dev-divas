@@ -9,7 +9,7 @@ vi.mock("../AuthContext.jsx", () => ({
 }));
 
 vi.mock("../firebase.js", () => ({
-	db: {},
+	database: {},
 }));
 
 describe("Match", () => {
