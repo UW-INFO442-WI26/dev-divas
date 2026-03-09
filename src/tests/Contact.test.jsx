@@ -1,4 +1,6 @@
+import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
 import Contact from "../Contact";
 
 describe("Contact Component", () => {
@@ -18,7 +20,7 @@ describe("Contact Component", () => {
     render(<Contact />);
 
     const inputs = screen.getAllByRole("textbox");
-    expect(inputs.length).toBeGreaterThanOrEqual(3); 
+    expect(inputs.length).toBeGreaterThanOrEqual(3);
   });
 
   it("renders send button", () => {
@@ -57,4 +59,4 @@ describe("Contact Component", () => {
     expect(messageInput.value).toBe("Hello there!");
   });
 
-}); 
+});

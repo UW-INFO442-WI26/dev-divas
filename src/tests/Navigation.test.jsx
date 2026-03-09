@@ -1,16 +1,19 @@
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
 import { MemoryRouter } from "react-router-dom";
 import Navigation from "./Navigation";
 
-jest.mock("../AuthContext.jsx", () => ({
+vi.mock("../AuthContext.jsx", () => ({
   useAuth: () => ({
     user: null,
-    logout: jest.fn(),
+    logout: vi.fn(),
   }),
 }));
 
 describe("Navigation", () => {
-  test("shows login link when user is not authenticated", () => {
+
+  it("shows login link when user is not authenticated", () => {
     render(
       <MemoryRouter>
         <Navigation />
@@ -20,7 +23,7 @@ describe("Navigation", () => {
     expect(screen.getByText(/log in/i)).toBeInTheDocument();
   });
 
-  test("shows main navigation links", () => {
+  it("shows main navigation links", () => {
     render(
       <MemoryRouter>
         <Navigation />
@@ -31,4 +34,5 @@ describe("Navigation", () => {
     expect(screen.getByText(/find schools/i)).toBeInTheDocument();
     expect(screen.getByText(/volunteer now/i)).toBeInTheDocument();
   });
+
 });

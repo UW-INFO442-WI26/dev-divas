@@ -1,11 +1,13 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
 import Qualifications from "../Qualifications";
 
 // mock alert
-global.alert = jest.fn();
+global.alert = vi.fn();
 
 // mock survey-react-ui
-jest.mock("survey-react-ui", () => ({
+vi.mock("survey-react-ui", () => ({
   Survey: ({ model }) => (
     <button
       data-testid="complete-survey"
@@ -23,7 +25,7 @@ jest.mock("survey-react-ui", () => ({
 describe("Qualifications Component", () => {
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("renders the survey component", () => {
@@ -51,3 +53,4 @@ describe("Qualifications Component", () => {
   });
 
 });
+

@@ -1,26 +1,35 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import '@testing-library/jest-dom/vitest'
 import InterestForm from '../InterestForm'
 import { push } from 'firebase/database'
 
 // mock react router navigation
-const mockNavigate = jest.fn()
+const mockNavigate = vi.fn()
 
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate
 }))
 
 // mock firebase database
-jest.mock('firebase/database', () => ({
-  push: jest.fn(() => Promise.resolve()),
-  ref: jest.fn()
+vi.mock('firebase/database', () => ({
+  push: vi.fn(() => Promise.resolve()),
+  ref: vi.fn()
 }))
 
 // mock survey-react-ui
-jest.mock('survey-react-ui', () => ({
+vi.mock('survey-react-ui', () => ({
   Survey: ({ model }) => (
     <button
       data-testid="complete-survey"
-      onClick={() => model.onComplete.fire(model, { data: { question1: ['Strong mission'], question2: ['High school'] } })}
+      onClick={() =>
+        model.onComplete.fire(model, {
+          data: {
+            question1: ['Strong mission'],
+            question2: ['High school']
+          }
+        })
+      }
     >
       Complete Survey
     </button>
@@ -30,7 +39,7 @@ jest.mock('survey-react-ui', () => ({
 describe('InterestForm', () => {
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     localStorage.clear()
   })
 
@@ -89,3 +98,4 @@ describe('InterestForm', () => {
   })
 
 })
+

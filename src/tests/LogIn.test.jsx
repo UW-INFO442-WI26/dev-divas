@@ -1,21 +1,23 @@
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
 import { MemoryRouter } from "react-router-dom";
 import LogIn from "./LogIn";
 
 // mock AuthContext
-jest.mock("../AuthContext.jsx", () => ({
-  useAuth: jest.fn(),
+vi.mock("../AuthContext.jsx", () => ({
+  useAuth: vi.fn(),
 }));
 
 import { useAuth } from "../AuthContext.jsx";
 
 describe("LogIn Page", () => {
 
-  test("shows Google login button when user is not logged in", () => {
+  it("shows Google login button when user is not logged in", () => {
     useAuth.mockReturnValue({
       user: null,
-      loginWithGoogle: jest.fn(),
-      logout: jest.fn(),
+      loginWithGoogle: vi.fn(),
+      logout: vi.fn(),
     });
 
     render(
@@ -25,19 +27,20 @@ describe("LogIn Page", () => {
     );
 
     expect(screen.getByText(/welcome back/i)).toBeInTheDocument();
+
     expect(
       screen.getByRole("button", { name: /continue with google/i })
     ).toBeInTheDocument();
   });
 
-  test("shows user info when logged in", () => {
+  it("shows user info when logged in", () => {
     useAuth.mockReturnValue({
       user: {
         displayName: "Jane Doe",
         email: "jane@email.com",
       },
-      loginWithGoogle: jest.fn(),
-      logout: jest.fn(),
+      loginWithGoogle: vi.fn(),
+      logout: vi.fn(),
     });
 
     render(
@@ -55,3 +58,4 @@ describe("LogIn Page", () => {
   });
 
 });
+
