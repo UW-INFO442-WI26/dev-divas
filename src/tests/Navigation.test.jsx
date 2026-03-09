@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { MemoryRouter } from "react-router-dom";
-import Navigation from "./Navigation";
+import Navigation from "../components/Navigation";
 
 vi.mock("../AuthContext.jsx", () => ({
   useAuth: () => ({

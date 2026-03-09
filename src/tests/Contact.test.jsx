@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import Contact from "../Contact";
+import Contact from "../components/Contact";
 
 describe("Contact Component", () => {
 
@@ -52,7 +52,7 @@ describe("Contact Component", () => {
   it("updates message textarea when typing", () => {
     render(<Contact />);
 
-    const messageInput = screen.getByRole("textbox", { name: "" });
+    const messageInput = screen.getAllByRole("textbox")[3];
 
     fireEvent.change(messageInput, { target: { value: "Hello there!" } });
 
