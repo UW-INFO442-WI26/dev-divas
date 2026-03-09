@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from "react-router-dom";
 import '@testing-library/jest-dom/vitest'
 import InterestForm from '../components/InterestForm'
 import { push } from 'firebase/database'
@@ -61,9 +60,7 @@ describe('InterestForm', () => {
 
   it('renders survey component', () => {
     render(
-      <MemoryRouter>
-        <InterestForm />
-      </MemoryRouter>
+      <InterestForm />
     )
 
     expect(screen.getByTestId('complete-survey')).toBeInTheDocument()
@@ -71,9 +68,7 @@ describe('InterestForm', () => {
 
   it('saves survey results to Firebase when survey completes', async () => {
     render(
-      <MemoryRouter>
-        <InterestForm />
-      </MemoryRouter>
+      <InterestForm />
     )
 
     fireEvent.click(screen.getByTestId('complete-survey'))
@@ -83,9 +78,7 @@ describe('InterestForm', () => {
 
   it('stores survey results in localStorage', async () => {
     render(
-      <MemoryRouter>
-        <InterestForm />
-      </MemoryRouter>
+      <InterestForm />
     )
 
     fireEvent.click(screen.getByTestId('complete-survey'))
@@ -100,9 +93,7 @@ describe('InterestForm', () => {
 
   it('shows completion message after survey submission', async () => {
     render(
-      <MemoryRouter>
         <InterestForm />
-      </MemoryRouter>
     )
 
     fireEvent.click(screen.getByTestId('complete-survey'))
@@ -112,9 +103,7 @@ describe('InterestForm', () => {
 
   it('renders "Go to Matches" button after completion', async () => {
     render(
-      <MemoryRouter>
-        <InterestForm />
-      </MemoryRouter>
+      <InterestForm />
     )
 
     fireEvent.click(screen.getByTestId('complete-survey'))
@@ -124,9 +113,7 @@ describe('InterestForm', () => {
 
   it('navigates to match page when clicking "Go to Matches"', async () => {
     render(
-      <MemoryRouter>
-        <InterestForm />
-      </MemoryRouter>
+      <InterestForm />
     )
 
     fireEvent.click(screen.getByTestId('complete-survey'))

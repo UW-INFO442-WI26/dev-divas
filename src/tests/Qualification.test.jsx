@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
 import "@testing-library/jest-dom/vitest";
 import Qualifications from "../components/Qualifications";
 
@@ -43,9 +42,7 @@ describe("Qualifications Component", () => {
 
   it("renders the survey component", () => {
     render(
-      <MemoryRouter>
-        <Qualifications />
-      </MemoryRouter>
+      <Qualifications />
     );
 
     expect(screen.getByTestId("complete-survey")).toBeInTheDocument();
@@ -53,9 +50,7 @@ describe("Qualifications Component", () => {
 
   it("saves survey data when completed", () => {
     render(
-      <MemoryRouter>
-        <Qualifications />
-      </MemoryRouter>
+      <Qualifications />
     );
 
     fireEvent.click(screen.getByTestId("complete-survey"));

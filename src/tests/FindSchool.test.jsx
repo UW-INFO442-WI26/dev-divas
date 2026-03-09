@@ -1,5 +1,4 @@
 import { render, screen, within } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, it, expect } from "vitest";
 import FindSchool from "../components/FindSchool";
 import { dummySchools } from "../components/Match";
@@ -9,11 +8,7 @@ describe("FindSchool route", () => {
     const firstSchool = dummySchools[0];
 
     render(
-      <MemoryRouter initialEntries={["/find-school"]}>
-        <Routes>
-          <Route path="/find-school" element={<FindSchool />} />
-        </Routes>
-      </MemoryRouter>
+      <FindSchool />
     );
 
     expect(screen.getByRole("heading", { name: /Schools That Need You/i })).toBeInTheDocument();
