@@ -6,127 +6,136 @@ import { useAuth } from '../AuthContext.jsx';
 import { Link } from 'react-router-dom';
 
 export const dummySchools = [
-  {
-    id: 1,
-    Name: "Elo High School",
-    Location: "California, USA",
-    Picture: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54",
-    Values: "Strong mission, Community service",
-    PrefLevel: "High school",
-    AvailableTime: "Feb 4, 2026 - June 20, 2026",
-    Description: "Elo High School has been established for over 50 years and has been committed to showcase culture and acceptance in the community. They are looking for volunteers who can help with their after-school programs for English and Mathematics tutoring.",
-    Link: "https://www.elohighschool.org",
-    Contact: "contact@elohighschool.org"
-  },
-  {
-    id: 2,
-    Name: "Sanchez Primary School",
-    Location: "New York, USA",
-    Picture: "https://images.unsplash.com/photo-1562774053-701939374585",
-    Values: "Flexible worktime, Fun students",
-    PrefLevel: "Middle school",
-    AvailableTime: "March 4, 2026 - August 20, 2026",
-    Description: "Sanchez Primary School is seeking volunteers who could assist with facilitating their events on promoting reading and mathematics literacy skills that will be hosted during class as break time events. They are flexible with the time commitments of volunteers and welcome any volunteers who wish to make deeper connections with students and gain experience.",
-    Link: "https://www.sanchezprimaryschool.org",
-    Contact: "contact@sanchezprimaryschool.org"
-  },
-  {
-    id: 3,
-    Name: "Yoshea Elementary School",
-    Location: "Massachusetts, USA",
-    Picture: "https://images.unsplash.com/photo-1584750153892-38414eb8e76a?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    Values: "Friendly staff, Community service",
-    PrefLevel: "High school",
-    AvailableTime: "August 4, 2026 - Not Set",
-    Description: "Yoshea Elementary School is a newly established school in rural areas of Massachusetts. They are in need for volunteers who are qualified to help with their school programs in promoting literacy and mathematics skills. They are looking for volunteers who value strong community connections and services.",
-    Link: "https://www.yosheaelementaryschool.org",
-    Contact: "contact@yosheaelementaryschool.org"
-  },
-  {
-    id: 4,
-    Name: "Almond Academy",
-    Location: "Texas, USA",
-    Picture: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    Values: "Strong mission, Friendly staff",
-    PrefLevel: "High school",
-    AvailableTime: "Feb 4, 2026 - June 20, 2026",
-    Description: "Almond Academy is a determined institution valuing the wellness of their students and staff. They promote free and accessible education for all, and are committed to fostering a friendly learning environment. They are looking for volunteers who support and align with these missions and are dedicated to making a positive impact.",
-    Link: "https://www.almondacademy.org",
-    Contact: "contact@almondacademy.org"
-  },
-  {
-    id: 5,
-    Name: "Layhay Primary School",
-    Location: "Florida, USA",
-    Picture: "https://images.unsplash.com/photo-1623078424463-473cf34e3ecf?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    Values: "Fun students, Flexible worktime",
-    PrefLevel: "Middle school",
-    AvailableTime: "April 29, 2026 - October 20, 2026",
-    Description: "Layhay Primary School has been established since 2010. They are dedicated to make learning fun and engaging for their students. Willing to accommodate volunteers with flexible worktime, they are looking for volunteers who are creative and can help with establishing their fun learning agendas.",
-    Link: "https://www.layhayprimaryschool.org",
-    Contact: "contact@layhayprimaryschool.org"
-  },
-  {
-    id: 6,
-    Name: "Illiya Primary School",
-    Location: "New Mexico, USA",
-    Picture: "https://images.unsplash.com/photo-1765041694034-0f2073ec666a?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    Values: "Fun students, Strong mission",
-    PrefLevel: "High school",
-    AvailableTime: "October 29, 2026 - December 20, 2026",
-    Description: "Illiya Primary School has dedicated mission to bridge the gaps between students and creating a fun learning environment for all. Emphasizing on extracurricular activities, they are looking for volunteers who are creative and can help with facilitating events for students to learn.",
-    Link: "https://www.illiyaprimaryschool.org",
-    Contact: "contact@illiyaprimaryschool.org"
-  },
-  {
-    id: 7,
-    Name: "Raymon Academy",
-    Location: "Ohio, USA",
-    Picture: "https://images.unsplash.com/photo-1770172410691-acea3d3bfef0?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    Values: "Friendly staff, Flexible worktime",
-    PrefLevel: "High school",
-    AvailableTime: "April 29, 2026 - October 20, 2026",
-    Description: "Raymon Academy is an institution established since 1990. Its goals orient the comfort of students and staff, aiming to create a safe place for all to study and grow. They are looking for volunteers who are willing to contribute effort to maintaining the friendly environment of the school and support the school's educational goals.",
-    Link: "https://www.raymonacademy.org",
-    Contact: "contact@raymonacademy.org"
-  },
-  {
-    id: 8,
-    Name: "Haiden Elementary School",
-    Location: "Arizona, USA",
-    Picture: "https://images.unsplash.com/photo-1762075314905-5e3deb92da69?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    Values: "Community service, Flexible worktime",
-    PrefLevel: "High school",
-    AvailableTime: "June 18, 2026 - October 20, 2026",
-    Description: "Haiden Elementary School values community bonding and provide free educational service to families with financial concerns. They aim to promote national educational goals with mathematics and reading literacy, hoping to seek volunteers who can support those goals.",
-    Link: "https://www.haidenelementaryschool.org",
-    Contact: "contact@haidenelementaryschool.org"
-  },
-  {
-    id: 9,
-    Name: "Green Lake Primary School",
-    Location: "Washington, USA",
-    Picture: "https://images.unsplash.com/photo-1758413352177-39b9ceffbb92?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    Values: "Fun students, Community service",
-    PrefLevel: "High school",
-    AvailableTime: "February 10, 2026 - June 20, 2026",
-    Description: "Green Lake Primary School has been established since 2000. Its mission lays in creating fun event times between students to foster a community bonding. They are looking for volunteers who are interested in participating in building and maintaining this community while gaining experiences in teaching.",
-    Link: "https://www.greenlakeprimaryschool.org",
-    Contact: "contact@greenlakeprimaryschool.org"
-  },
-  {
-    id: 10,
-    Name: "Muhan Primary School",
-    Location: "California, USA",
-    Picture: "https://images.unsplash.com/photo-1613896527026-f195d5c818ed?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    Values: "Strong mission, Friendly staff",
-    PrefLevel: "High school",
-    AvailableTime: "May 16, 2026 - November 21, 2026",
-    Description: "Muhan Primary School is dedicated to help students with building strong fundamentals in mathematics and reading literacy, aiming to encourage students with more confidence in navigating towards higher education. They are looking for volunteers who are friendly and willing to guide students gently.",
-    Link: "https://www.muhanprimaryschool.org",
-    Contact: "contact@muhanprimaryschool.org"
-  }
-];
+    {
+      id: 1,
+      Name: "Elo High School",
+      Location: "California, USA",
+      Picture: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54",
+      Values: "Strong mission, Community service",
+      PrefLevel: "High school",
+      AvailableTime: "Feb 4, 2026 - June 20, 2026",
+      Description: "Elo High School has been established for over 50 years and has been committed to showcase culture and acceptance in the community. They are looking for volunteers who can help with their after-school programs for English and Mathematics tutoring.",
+      Link: "https://www.elohighschool.org",
+      Contact: "contact@elohighschool.org"
+    },
+  
+    {
+      id: 2,
+      Name: "Fikre Community Learning School",
+      Location: "Asmara, Eritrea",
+      Picture: "https://images.unsplash.com/photo-1509062522246-3755977927d7",
+      Values: "Community service, Strong mission",
+      PrefLevel: "High school",
+      AvailableTime: "March 10, 2026 - July 30, 2026",
+      Description: "Fikre Community Learning School is dedicated to improving educational access for students in Eritrea. The school focuses on mathematics, English literacy, and mentorship programs for students who hope to continue their studies. Volunteers can assist teachers with tutoring sessions and after-school academic support programs.",
+      Link: "https://www.fikrecommunityschool.org",
+      Contact: "contact@fikrecommunityschool.org"
+    },
+  
+    {
+      id: 3,
+      Name: "Kathmandu Valley Learning Center",
+      Location: "Kathmandu, Nepal",
+      Picture: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1",
+      Values: "Community service, Friendly staff",
+      PrefLevel: "High school",
+      AvailableTime: "April 2, 2026 - September 15, 2026",
+      Description: "Kathmandu Valley Learning Center supports students from rural areas who travel to the city for better educational opportunities. The school offers tutoring support and extracurricular learning sessions in mathematics and science. Volunteers help facilitate workshops and provide mentorship to students preparing for higher education.",
+      Link: "https://www.kathmanduvalleylearning.org",
+      Contact: "contact@kathmanduvalleylearning.org"
+    },
+  
+    {
+      id: 4,
+      Name: "Almond Academy",
+      Location: "Texas, USA",
+      Picture: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952",
+      Values: "Strong mission, Friendly staff",
+      PrefLevel: "High school",
+      AvailableTime: "Feb 4, 2026 - June 20, 2026",
+      Description: "Almond Academy is a determined institution valuing the wellness of their students and staff. They promote free and accessible education for all, and are committed to fostering a friendly learning environment. They are looking for volunteers who support and align with these missions and are dedicated to making a positive impact.",
+      Link: "https://www.almondacademy.org",
+      Contact: "contact@almondacademy.org"
+    },
+  
+    {
+      id: 5,
+      Name: "Kampala Bright Future School",
+      Location: "Kampala, Uganda",
+      Picture: "https://images.unsplash.com/photo-1577896851231-70ef18881754",
+      Values: "Fun students, Community service",
+      PrefLevel: "Middle school",
+      AvailableTime: "May 1, 2026 - October 15, 2026",
+      Description: "Kampala Bright Future School supports students from underserved communities by providing access to basic education and literacy programs. The school welcomes volunteers who are interested in assisting teachers with mathematics tutoring and helping organize engaging learning activities for students.",
+      Link: "https://www.brightfuturesuganda.org",
+      Contact: "contact@brightfuturesuganda.org"
+    },
+  
+    {
+      id: 6,
+      Name: "Phnom Penh Learning Initiative",
+      Location: "Phnom Penh, Cambodia",
+      Picture: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b",
+      Values: "Flexible worktime, Friendly staff",
+      PrefLevel: "High school",
+      AvailableTime: "June 10, 2026 - November 30, 2026",
+      Description: "Phnom Penh Learning Initiative provides academic support to students from low-income families. Volunteers help with English language tutoring, mathematics workshops, and mentoring students interested in pursuing university education.",
+      Link: "https://www.pplearninginitiative.org",
+      Contact: "contact@pplearninginitiative.org"
+    },
+  
+    {
+      id: 7,
+      Name: "Raymon Academy",
+      Location: "Ohio, USA",
+      Picture: "https://images.unsplash.com/photo-1770172410691-acea3d3bfef0",
+      Values: "Friendly staff, Flexible worktime",
+      PrefLevel: "High school",
+      AvailableTime: "April 29, 2026 - October 20, 2026",
+      Description: "Raymon Academy is an institution established since 1990. Its goals orient the comfort of students and staff, aiming to create a safe place for all to study and grow. They are looking for volunteers who are willing to contribute effort to maintaining the friendly environment of the school and support the school's educational goals.",
+      Link: "https://www.raymonacademy.org",
+      Contact: "contact@raymonacademy.org"
+    },
+  
+    {
+      id: 8,
+      Name: "La Paz Community School",
+      Location: "La Paz, Bolivia",
+      Picture: "https://images.unsplash.com/photo-1588072432836-e10032774350",
+      Values: "Community service, Flexible worktime",
+      PrefLevel: "High school",
+      AvailableTime: "July 12, 2026 - December 5, 2026",
+      Description: "La Paz Community School focuses on supporting students from mountainous rural communities in Bolivia. The school encourages volunteers to assist with literacy development, mathematics tutoring, and creative learning activities that help students build confidence in their education.",
+      Link: "https://www.lapazcommunityschool.org",
+      Contact: "contact@lapazcommunityschool.org"
+    },
+  
+    {
+      id: 9,
+      Name: "Green Lake Primary School",
+      Location: "Washington, USA",
+      Picture: "https://images.unsplash.com/photo-1758413352177-39b9ceffbb92",
+      Values: "Fun students, Community service",
+      PrefLevel: "High school",
+      AvailableTime: "February 10, 2026 - June 20, 2026",
+      Description: "Green Lake Primary School has been established since 2000. Its mission lays in creating fun event times between students to foster a community bonding. They are looking for volunteers who are interested in participating in building and maintaining this community while gaining experiences in teaching.",
+      Link: "https://www.greenlakeprimaryschool.org",
+      Contact: "contact@greenlakeprimaryschool.org"
+    },
+  
+    {
+      id: 10,
+      Name: "Muhan Primary School",
+      Location: "California, USA",
+      Picture: "https://images.unsplash.com/photo-1613896527026-f195d5c818ed",
+      Values: "Strong mission, Friendly staff",
+      PrefLevel: "High school",
+      AvailableTime: "May 16, 2026 - November 21, 2026",
+      Description: "Muhan Primary School is dedicated to help students with building strong fundamentals in mathematics and reading literacy, aiming to encourage students with more confidence in navigating towards higher education.",
+      Link: "https://www.muhanprimaryschool.org",
+      Contact: "contact@muhanprimaryschool.org"
+    }
+  ];
 
 export default function Match() {
   const [schools, setSchools] = useState([]);

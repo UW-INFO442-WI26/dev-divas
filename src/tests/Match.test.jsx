@@ -40,11 +40,11 @@ describe("Match", () => {
 
 		expect(screen.getByText(/Elo High School/i)).toBeInTheDocument();
 		expect(screen.getByText(/Almond Academy/i)).toBeInTheDocument();
-		expect(screen.getByText(/Illiya Primary School/i)).toBeInTheDocument();
+		expect(screen.getByText(/Fikre Community Learning School/i)).toBeInTheDocument();
 		expect(screen.getByText(/Muhan Primary School/i)).toBeInTheDocument();
 
-		expect(screen.queryByText(/Sanchez Primary School/i)).not.toBeInTheDocument();
-		expect(screen.queryByText(/Layhay Primary School/i)).not.toBeInTheDocument();
+		expect(screen.queryByText(/La Paz Community School/i)).not.toBeInTheDocument();
+		expect(screen.queryByText(/Green Lake Primary School/i)).not.toBeInTheDocument();
 	});
 
 	it("mock situation: if user accepts all matched schools, the matched schools should show up as cards", async () => {
@@ -85,7 +85,7 @@ describe("Match", () => {
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("button", {
-				name: /view details for matched school: illiya primary school/i,
+				name: /view details for matched school: Fikre Community Learning School/i,
 			})
 		).toBeInTheDocument();
 		expect(
