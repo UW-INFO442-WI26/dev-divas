@@ -36,7 +36,7 @@ export const dummySchools = [
       id: 3,
       Name: "Kathmandu Valley Learning Center",
       Location: "Kathmandu, Nepal",
-      Picture: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1",
+      Picture: "https://images.unsplash.com/photo-1753710994277-938cea430968?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       Values: "Community service, Friendly staff",
       PrefLevel: "High school",
       AvailableTime: "April 2, 2026 - September 15, 2026",
